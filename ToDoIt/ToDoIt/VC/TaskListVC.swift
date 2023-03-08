@@ -9,8 +9,11 @@ import UIKit
 
 class TaskListVC: UIViewController {
     
-        
+    // MARK: - Properties
+    
     private var contentView: TaskListView!
+    
+    var tasks = dummyTasks
     
     // MARK: - Lifecycle
 
@@ -23,6 +26,10 @@ class TaskListVC: UIViewController {
         navigationItem.rightBarButtonItem = contentView.newTaskButton
         
         contentView.presentTaskViewDelegate = self
+        
+        contentView.tableView.dataSource = self
+        contentView.tableView.delegate = self
+        contentView.tableView.register(TaskTableViewCell.self, forCellReuseIdentifier: TaskTableViewCell.taskTableViewCellIdentifier)
     }
     
     // MARK: - Functions
@@ -35,5 +42,28 @@ extension TaskListVC: PresentNewTaskViewDelegate {
     func presentNewTaskView() {
         navigationController?.pushViewController(NewTaskVC(), animated: true)
     }
+}
+
+// MARK: - UITableViewDataSource
+
+extension TaskListVC: UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        tasks.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = contentView.tableView.dequeueReusableCell(withIdentifier: TaskTableViewCell.taskTableViewCellIdentifier) as! TaskTableViewCell
+        let currentTask = tasks[indexPath.row]
+        cell.configureTask(task: currentTask)
+        return cell
+    }
+    
+    
+}
+
+// MARK: - UITableViewDelegate
+
+extension TaskListVC: UITableViewDelegate {
+    
 }
 
