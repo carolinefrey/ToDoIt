@@ -16,11 +16,8 @@ class TaskTableViewCell: UITableViewCell {
     let taskFieldView: UITextView = {
         let field = UITextView()
         field.translatesAutoresizingMaskIntoConstraints = false
-        field.backgroundColor = .lightGray
         field.returnKeyType = .default
-        field.layer.cornerRadius = 10
-        field.font = .systemFont(ofSize: 14)
-        field.textColor = .black
+        field.font = .systemFont(ofSize: 16)
         return field
     }()
     
@@ -58,12 +55,12 @@ class TaskTableViewCell: UITableViewCell {
         
         NSLayoutConstraint.activate([
             taskFieldView.topAnchor.constraint(equalTo: topAnchor),
-            taskFieldView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            taskFieldView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 5),
             taskFieldView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            taskFieldView.heightAnchor.constraint(equalToConstant: 25),
+            taskFieldView.heightAnchor.constraint(equalToConstant: 35),
             
             tagView.topAnchor.constraint(equalTo: taskFieldView.bottomAnchor),
-            tagView.leadingAnchor.constraint(equalTo: taskFieldView.leadingAnchor),
+            tagView.leadingAnchor.constraint(equalTo: taskFieldView.leadingAnchor, constant: 6),
         ])
     }
 

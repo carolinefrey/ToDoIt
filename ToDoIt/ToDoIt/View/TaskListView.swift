@@ -39,7 +39,8 @@ class TaskListView: UIView {
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.clipsToBounds = true
         tableView.layer.cornerRadius = 30
-        tableView.rowHeight = 70
+        tableView.rowHeight = 60
+        tableView.separatorStyle = .none
         return tableView
     }()
     

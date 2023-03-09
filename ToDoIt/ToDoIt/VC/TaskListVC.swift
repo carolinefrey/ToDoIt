@@ -13,7 +13,7 @@ class TaskListVC: UIViewController {
     
     private var contentView: TaskListView!
     
-    var tasks = dummyTasks
+    var tasks: [Task] = []
     
     // MARK: - Lifecycle
 
@@ -32,6 +32,10 @@ class TaskListVC: UIViewController {
         contentView.tableView.register(TaskTableViewCell.self, forCellReuseIdentifier: TaskTableViewCell.taskTableViewCellIdentifier)
     }
     
+    override func viewDidLoad() {
+        contentView.tableView.reloadData()
+    }
+    
     // MARK: - Functions
     
 }
@@ -40,7 +44,7 @@ class TaskListVC: UIViewController {
 
 extension TaskListVC: PresentNewTaskViewDelegate {
     func presentNewTaskView() {
-        navigationController?.pushViewController(NewTaskVC(), animated: true)
+        navigationController?.pushViewController(NewTaskVC(tasks: tasks), animated: true)
     }
 }
 
@@ -57,13 +61,14 @@ extension TaskListVC: UITableViewDataSource {
         cell.configureTask(task: currentTask)
         return cell
     }
-    
-    
 }
 
 // MARK: - UITableViewDelegate
 
 extension TaskListVC: UITableViewDelegate {
-    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        // TODO: - Implement task editing
+        //  either directly in cell or present an alert with a textField
+    }
 }
 

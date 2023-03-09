@@ -24,8 +24,8 @@ struct Task {
     }
 }
 
-let dummyTasks: [Task] = [Task(task: "Laundry", tag: "personal", date: .today),
-                         Task(task: "Trash", tag: "personal", date: .today),
-                         Task(task: "Prep for meeting", tag: "work", date: .today),
-                         Task(task: "Build email", tag: "work", date: .today),
-                         Task(task: "Groceries", tag: "personal", date: .nextWeek)]
+//var dummyTasks: [Task] = [Task(task: "Laundry", tag: "personal", date: .today),
+//                         Task(task: "Trash", tag: "personal", date: .today),
+//                         Task(task: "Prep for meeting", tag: "work", date: .today),
+//                         Task(task: "Build email", tag: "work", date: .today),
+//                         Task(task: "Groceries", tag: "personal", date: .nextWeek)]

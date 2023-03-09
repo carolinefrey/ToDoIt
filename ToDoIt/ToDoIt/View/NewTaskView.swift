@@ -11,13 +11,18 @@ protocol PopViewDelegate: AnyObject {
     func popView()
 }
 
+protocol AddNewTaskDelegate: AnyObject {
+    func addNewTask(task: Task)
+}
+
 class NewTaskView: UIView {
     
     var popViewDelegate: PopViewDelegate?
+    var newTaskDelegate: AddNewTaskDelegate?
 
     // MARK: - UI Properties
     
-    let newTaskTitle: UILabel = {
+    let newTaskViewTitle: UILabel = {
         let newTaskTitle = UILabel()
         newTaskTitle.translatesAutoresizingMaskIntoConstraints = false
         newTaskTitle.font = .boldSystemFont(ofSize: 38)
@@ -27,7 +32,7 @@ class NewTaskView: UIView {
     }()
     
     lazy var backButton: UIBarButtonItem = {
-        let config = UIImage.SymbolConfiguration(textStyle: .title1)
+        let config = UIImage.SymbolConfiguration(textStyle: .title2)
         let icon = UIImage(systemName: "arrowshape.backward", withConfiguration: config)
         let button = UIBarButtonItem(image: icon, style: .plain, target: self, action: #selector(backButtonTapped))
         button.tintColor = .black
@@ -42,6 +47,20 @@ class NewTaskView: UIView {
         return button
     }()
     
+    let taskFieldView: UITextView = {
+        let field = UITextView()
+        field.translatesAutoresizingMaskIntoConstraints = false
+        field.returnKeyType = .default
+        field.font = .systemFont(ofSize: 16)
+        return field
+    }()
+    
+    let tagsBoxView: TagsBoxView = {
+        let box = TagsBoxView()
+        box.translatesAutoresizingMaskIntoConstraints = false
+        return box
+    }()
+
     // MARK: - Initializers
     
     override init(frame: CGRect) {
@@ -62,16 +81,31 @@ class NewTaskView: UIView {
     
     @objc func saveTaskButtonTapped() {
         //TODO: - Implement save task
-    }
-    
-    private func configureViews() {
-        addSubview(newTaskTitle)
-        
-        NSLayoutConstraint.activate([
-            newTaskTitle.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
-            newTaskTitle.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
-        ])
+        let newTask = Task(task: taskFieldView.text)
+        newTaskDelegate?.addNewTask(task: newTask)
+        popViewDelegate?.popView()
     }
     
     // MARK: - UI Setup
+    
+    private func configureViews() {
+        addSubview(newTaskViewTitle)
+        addSubview(taskFieldView)
+        addSubview(tagsBoxView)
+        
+        NSLayoutConstraint.activate([
+            newTaskViewTitle.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
+            newTaskViewTitle.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
+            
+            taskFieldView.topAnchor.constraint(equalTo: newTaskViewTitle.bottomAnchor, constant: 20),
+            taskFieldView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
+            taskFieldView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
+            taskFieldView.heightAnchor.constraint(equalToConstant: 150),
+            
+            tagsBoxView.topAnchor.constraint(equalTo: taskFieldView.bottomAnchor, constant: 50),
+            tagsBoxView.centerXAnchor.constraint(equalTo: centerXAnchor),
+            tagsBoxView.heightAnchor.constraint(equalToConstant: 150),
+            tagsBoxView.widthAnchor.constraint(equalTo: widthAnchor, multiplier: 0.90),
+        ])
+    }
 }
