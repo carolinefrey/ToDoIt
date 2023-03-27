@@ -7,9 +7,15 @@
 
 import UIKit
 
+protocol AddNewTaskDelegate: AnyObject {
+    func addNewTask(task: Task)
+}
+
 class NewTaskVC: UIViewController {
     
     private var contentView: NewTaskView!
+    
+    var newTaskDelegate: AddNewTaskDelegate?
 
     var tasks: [Task]
     
@@ -37,6 +43,7 @@ class NewTaskVC: UIViewController {
         
         contentView.popViewDelegate = self
         contentView.tagsBoxView.presentNewTagViewDelegate = self
+        contentView.saveTaskButtonTappedDelegate = self
     }
 }
 
@@ -72,8 +79,18 @@ extension NewTaskVC: PresentNewTagViewDelegate {
 
 // MARK: - AddNewTaskDelegate
 
-extension NewTaskVC: AddNewTaskDelegate {
-    func addNewTask(task: Task) {
-        self.tasks.append(task)
+////this needs to be in TaskListVC?
+//extension NewTaskVC: AddNewTaskDelegate {
+//    func addNewTask(task: Task) {
+//        newTaskDelegate?.addNewTask(task: task)
+////        self.tasks.append(task)
+//    }
+//}
+
+// MARK: - SaveTaskButtonTappedDelegate
+
+extension NewTaskVC: SaveTaskButtonTappedDelegate {
+    func saveButtonTapped(task: Task) {
+        newTaskDelegate?.addNewTask(task: task)
     }
 }

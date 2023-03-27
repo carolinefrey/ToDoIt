@@ -32,6 +32,8 @@ class TaskListVC: UIViewController {
         contentView.tableView.register(TaskTableViewCell.self, forCellReuseIdentifier: TaskTableViewCell.taskTableViewCellIdentifier)
     }
     
+    // MARK: - Lifecycle
+    
     override func viewDidLoad() {
         contentView.tableView.reloadData()
     }
@@ -44,7 +46,10 @@ class TaskListVC: UIViewController {
 
 extension TaskListVC: PresentNewTaskViewDelegate {
     func presentNewTaskView() {
-        navigationController?.pushViewController(NewTaskVC(tasks: tasks), animated: true)
+        let newTaskVC = NewTaskVC(tasks: tasks)
+//        newTaskVC.newTaskDelegate.delegate = self
+        newTaskVC.newTaskDelegate = self
+        navigationController?.pushViewController(newTaskVC, animated: true)
     }
 }
 
@@ -72,3 +77,11 @@ extension TaskListVC: UITableViewDelegate {
     }
 }
 
+// MARK: - AddNewTaskDelegate
+
+extension TaskListVC: AddNewTaskDelegate {
+    func addNewTask(task: Task) {
+        self.tasks.append(task)
+        self.contentView.tableView.reloadData()
+    }
+}

@@ -11,14 +11,19 @@ protocol PopViewDelegate: AnyObject {
     func popView()
 }
 
-protocol AddNewTaskDelegate: AnyObject {
-    func addNewTask(task: Task)
+//protocol AddNewTaskDelegate: AnyObject {
+//    func addNewTask(task: Task)
+//}
+
+protocol SaveTaskButtonTappedDelegate: AnyObject {
+    func saveButtonTapped(task: Task)
 }
 
 class NewTaskView: UIView {
     
     var popViewDelegate: PopViewDelegate?
-    var newTaskDelegate: AddNewTaskDelegate?
+//    var newTaskDelegate: AddNewTaskDelegate?
+    var saveTaskButtonTappedDelegate: SaveTaskButtonTappedDelegate?
 
     // MARK: - UI Properties
     
@@ -82,7 +87,8 @@ class NewTaskView: UIView {
     @objc func saveTaskButtonTapped() {
         //TODO: - Implement save task
         let newTask = Task(task: taskFieldView.text)
-        newTaskDelegate?.addNewTask(task: newTask)
+//        newTaskDelegate?.addNewTask(task: newTask)
+        saveTaskButtonTappedDelegate?.saveButtonTapped(task: newTask)
         popViewDelegate?.popView()
     }
     
