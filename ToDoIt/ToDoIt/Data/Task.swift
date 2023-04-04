@@ -9,7 +9,7 @@ import Foundation
 
 enum TaskCompletionDate {
     case today
-    case nextWeek
+    case later
 }
 
 struct Task {

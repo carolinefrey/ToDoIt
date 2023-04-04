@@ -42,7 +42,7 @@ class TaskTableViewCell: UITableViewCell {
     
     // MARK: - Functions
     
-    func configureTask(task: Task) {
+    func configureTask(task: ToDoItem) {
         taskFieldView.text = task.task
         tagView.text = task.tag
     }

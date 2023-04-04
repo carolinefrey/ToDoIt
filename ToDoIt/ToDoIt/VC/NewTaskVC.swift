@@ -7,22 +7,22 @@
 
 import UIKit
 
-protocol AddNewTaskDelegate: AnyObject {
-    func addNewTask(task: Task)
+protocol SaveTaskToListDelegate: AnyObject {
+    func saveTaskToList()
 }
 
 class NewTaskVC: UIViewController {
     
     private var contentView: NewTaskView!
     
-    var newTaskDelegate: AddNewTaskDelegate?
+    var saveTaskToListDelegate: SaveTaskToListDelegate?
 
-    var tasks: [Task]
+    var toDoItems: [ToDoItem]
     
     // MARK: - Initializer
     
-    init(tasks: [Task]) {
-        self.tasks = tasks
+    init(toDoItems: [ToDoItem]) {
+        self.toDoItems = toDoItems
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -43,7 +43,7 @@ class NewTaskVC: UIViewController {
         
         contentView.popViewDelegate = self
         contentView.tagsBoxView.presentNewTagViewDelegate = self
-        contentView.saveTaskButtonTappedDelegate = self
+        contentView.saveTaskDelegate = self
     }
 }
 
@@ -77,20 +77,10 @@ extension NewTaskVC: PresentNewTagViewDelegate {
     }
 }
 
-// MARK: - AddNewTaskDelegate
-
-////this needs to be in TaskListVC?
-//extension NewTaskVC: AddNewTaskDelegate {
-//    func addNewTask(task: Task) {
-//        newTaskDelegate?.addNewTask(task: task)
-////        self.tasks.append(task)
-//    }
-//}
-
 // MARK: - SaveTaskButtonTappedDelegate
 
-extension NewTaskVC: SaveTaskButtonTappedDelegate {
-    func saveButtonTapped(task: Task) {
-        newTaskDelegate?.addNewTask(task: task)
+extension NewTaskVC: SaveTaskDelegate {
+    func saveTask() {
+        saveTaskToListDelegate?.saveTaskToList()
     }
 }

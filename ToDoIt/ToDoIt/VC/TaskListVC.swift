@@ -13,7 +13,7 @@ class TaskListVC: UIViewController {
     
     private var contentView: TaskListView!
     
-    var tasks: [Task] = []
+    var toDoItems: [ToDoItem] = []
     
     // MARK: - Lifecycle
 
@@ -25,11 +25,11 @@ class TaskListVC: UIViewController {
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: contentView.todayTitle)
         navigationItem.rightBarButtonItem = contentView.newTaskButton
         
-        contentView.presentTaskViewDelegate = self
+        setContentViewDelegates()
         
-        contentView.tableView.dataSource = self
-        contentView.tableView.delegate = self
         contentView.tableView.register(TaskTableViewCell.self, forCellReuseIdentifier: TaskTableViewCell.taskTableViewCellIdentifier)
+        
+        fetchToDoItems()
     }
     
     // MARK: - Lifecycle
@@ -40,15 +40,30 @@ class TaskListVC: UIViewController {
     
     // MARK: - Functions
     
+    private func setContentViewDelegates() {
+        contentView.presentTaskViewDelegate = self
+        contentView.tableView.dataSource = self
+        contentView.tableView.delegate = self
+    }
+    
+    private func fetchToDoItems() {
+        DataManager.fetchTasks { [weak self] tasks in
+            if let fetchedTasks = tasks {
+                toDoItems = fetchedTasks
+            }
+            DispatchQueue.main.async { [weak self] in
+                self?.contentView.tableView.reloadData()
+            }
+        }
+    }
 }
 
 // MARK: - PresentNewTaskViewDelegate
 
 extension TaskListVC: PresentNewTaskViewDelegate {
     func presentNewTaskView() {
-        let newTaskVC = NewTaskVC(tasks: tasks)
-//        newTaskVC.newTaskDelegate.delegate = self
-        newTaskVC.newTaskDelegate = self
+        let newTaskVC = NewTaskVC(toDoItems: toDoItems)
+        newTaskVC.saveTaskToListDelegate = self
         navigationController?.pushViewController(newTaskVC, animated: true)
     }
 }
@@ -57,12 +72,12 @@ extension TaskListVC: PresentNewTaskViewDelegate {
 
 extension TaskListVC: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        tasks.count
+        toDoItems.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = contentView.tableView.dequeueReusableCell(withIdentifier: TaskTableViewCell.taskTableViewCellIdentifier) as! TaskTableViewCell
-        let currentTask = tasks[indexPath.row]
+        let currentTask = toDoItems[indexPath.row]
         cell.configureTask(task: currentTask)
         return cell
     }
@@ -79,9 +94,9 @@ extension TaskListVC: UITableViewDelegate {
 
 // MARK: - AddNewTaskDelegate
 
-extension TaskListVC: AddNewTaskDelegate {
-    func addNewTask(task: Task) {
-        self.tasks.append(task)
+extension TaskListVC: SaveTaskToListDelegate {
+    func saveTaskToList() {
+        fetchToDoItems()
         self.contentView.tableView.reloadData()
     }
 }
