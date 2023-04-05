@@ -35,6 +35,7 @@ class TaskListVC: UIViewController {
     // MARK: - Lifecycle
     
     override func viewDidLoad() {
+        fetchToDoItems()
         contentView.tableView.reloadData()
     }
     
@@ -89,6 +90,14 @@ extension TaskListVC: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         // TODO: - Implement task editing
         //  either directly in cell or present an alert with a textField
+    }
+    
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            DataManager.deleteTask(task: toDoItems[indexPath.row])
+            toDoItems.remove(at: indexPath.row)
+            tableView.deleteRows(at: [indexPath], with: .fade)
+        }
     }
 }
 
