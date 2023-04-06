@@ -7,28 +7,27 @@
 
 import UIKit
 
-//TODO: - assign protocol delegate in TaskListVC (?)
-protocol MarkTaskAsCompleteDelegate: AnyObject {
-    func markTaskAsComplete()
-}
+//protocol MarkTaskAsCompleteDelegate: AnyObject {
+//    func markTaskAsComplete()
+//}
 
 class TaskTableViewCell: UITableViewCell {
 
     static let taskTableViewCellIdentifier = "TaskTableViewCell"
     
-    let markTaskAsCompleteDelegate: MarkTaskAsCompleteDelegate?
+//    var markTaskAsCompleteDelegate: MarkTaskAsCompleteDelegate?
     
     // MARK: - UI Properties
     
-    lazy var checkboxButtonView: UIButton = {
-        let checkbox = UIButton()
-        checkbox.translatesAutoresizingMaskIntoConstraints = false
-        let config = UIImage.SymbolConfiguration(pointSize: 20)
-        checkbox.setImage(UIImage(systemName: "square", withConfiguration: config), for: .normal)
-        checkbox.addTarget(self, action: #selector(checkboxButtonTapped), for: .touchUpInside)
-        checkbox.tintColor = .black
-        return checkbox
-    }()
+//    lazy var checkboxButtonView: UIButton = {
+//        let checkbox = UIButton()
+//        checkbox.translatesAutoresizingMaskIntoConstraints = false
+//        let config = UIImage.SymbolConfiguration(pointSize: 20)
+//        checkbox.setImage(UIImage(systemName: "square", withConfiguration: config), for: .normal)
+//        checkbox.addTarget(self, action: #selector(checkboxButtonTapped), for: .touchUpInside)
+//        checkbox.tintColor = .black
+//        return checkbox
+//    }()
 
     let taskFieldView: UITextView = {
         let field = UITextView()
@@ -59,9 +58,9 @@ class TaskTableViewCell: UITableViewCell {
     
     // MARK: - Functions
     
-    @objc func checkboxButtonTapped() {
-        markTaskAsCompleteDelegate?.markTaskAsComplete()
-    }
+//    @objc func checkboxButtonTapped() {
+//        markTaskAsCompleteDelegate?.markTaskAsComplete()
+//    }
     
     func configureTask(task: ToDoItem) {
         taskFieldView.text = task.task
@@ -71,16 +70,16 @@ class TaskTableViewCell: UITableViewCell {
     // MARK: - UI Setup
     
     private func configureViews() {
-        addSubview(checkboxButtonView)
+//        addSubview(checkboxButtonView)
         addSubview(taskFieldView)
         addSubview(tagView)
         
         NSLayoutConstraint.activate([
-            checkboxButtonView.centerYAnchor.constraint(equalTo: centerYAnchor),
-            checkboxButtonView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 5),
+//            checkboxButtonView.centerYAnchor.constraint(equalTo: centerYAnchor),
+//            checkboxButtonView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 5),
             
             taskFieldView.centerYAnchor.constraint(equalTo: centerYAnchor),
-            taskFieldView.leadingAnchor.constraint(equalTo: checkboxButtonView.trailingAnchor, constant: 3),
+            taskFieldView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 3),
             taskFieldView.trailingAnchor.constraint(equalTo: trailingAnchor),
             taskFieldView.heightAnchor.constraint(equalToConstant: 35),
             
