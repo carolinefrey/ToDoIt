@@ -31,6 +31,17 @@ class DataManager {
         }
     }
     
+    static func saveTag(tag: String) {
+        let newTag = Tag(context: managedObjectContext)
+        newTag.tag = tag
+        
+        do {
+            try managedObjectContext.save()
+        } catch {
+            
+        }
+    }
+    
     // MARK: - Read
     
     static func fetchTasks(completion: ([ToDoItem]?) -> Void) {
@@ -60,6 +71,33 @@ class DataManager {
         completion(nil)
     }
     
+    static func fetchTags(completion: ([Tag]?) -> Void) {
+        do {
+            let tags = try managedObjectContext.fetch(Tag.fetchRequest())
+            completion(tags)
+        }
+        catch {
+            
+        }
+        
+        completion(nil)
+    }
+    
+    static func fetchTag(tag: String, completion: (Tag?) -> Void) {
+        let fetchRequest = NSFetchRequest<Tag>(entityName: "Tag")
+        fetchRequest.predicate = NSPredicate(format: "Tag == %@", tag)
+        
+        do {
+            let tag = try managedObjectContext.fetch(fetchRequest)
+            completion(tag.first)
+        }
+        catch {
+            print("Could not fetch due to error: \(error.localizedDescription)")
+        }
+        
+        completion(nil)
+    }
+    
     // MARK: - Update
     
     static func updateTask(toDoItem: ToDoItem, task: String, tag: String) {
@@ -74,10 +112,32 @@ class DataManager {
         }
     }
     
+    static func updateTag(tag: Tag, updatedTag: String) {
+        tag.tag = updatedTag
+        
+        do {
+            try managedObjectContext.save()
+        }
+        catch {
+            
+        }
+    }
+    
     // MARK: - Delete
     
     static func deleteTask(task: ToDoItem) {
         managedObjectContext.delete(task)
+        
+        do {
+            try managedObjectContext.save()
+        }
+        catch {
+            
+        }
+    }
+    
+    static func deleteTag(tag: Tag) {
+        managedObjectContext.delete(tag)
         
         do {
             try managedObjectContext.save()

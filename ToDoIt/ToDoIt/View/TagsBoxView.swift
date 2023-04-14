@@ -45,6 +45,17 @@ class TagsBoxView: UIView {
         return button
     }()
     
+    let tableView: UITableView = {
+        let tableView = UITableView()
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        tableView.clipsToBounds = true
+        tableView.layer.cornerRadius = 10
+        tableView.rowHeight = 20
+        tableView.separatorStyle = .none
+        tableView.backgroundColor = .lightGray
+        return tableView
+    }()
+    
     // MARK: - Initializers
     
     override init(frame: CGRect) {
@@ -68,6 +79,7 @@ class TagsBoxView: UIView {
         addSubview(tagBoxView)
         addSubview(tagBoxTitle)
         addSubview(newTagButton)
+        addSubview(tableView)
         
         NSLayoutConstraint.activate([
             tagBoxView.topAnchor.constraint(equalTo: topAnchor),
@@ -80,6 +92,11 @@ class TagsBoxView: UIView {
             
             newTagButton.topAnchor.constraint(equalTo: tagBoxView.topAnchor, constant: 10),
             newTagButton.trailingAnchor.constraint(equalTo: tagBoxView.trailingAnchor, constant: -10),
+            
+            tableView.topAnchor.constraint(equalTo: tagBoxTitle.bottomAnchor, constant: 5),
+            tableView.leadingAnchor.constraint(equalTo: tagBoxView.leadingAnchor, constant: 10),
+            tableView.trailingAnchor.constraint(equalTo: tagBoxView.trailingAnchor, constant: -10),
+            tableView.bottomAnchor.constraint(equalTo: tagBoxView.bottomAnchor, constant: -10),
         ])
     }
 }

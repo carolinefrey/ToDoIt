@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="21279" systemVersion="22A400" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="Tag" representedClassName="Tag" syncable="YES">
+        <attribute name="tag" attributeType="String"/>
+        <relationship name="toDoItems" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ToDoItem" inverseName="tag" inverseEntity="ToDoItem"/>
+    </entity>
     <entity name="ToDoItem" representedClassName="ToDoItem" syncable="YES">
-        <attribute name="tag" optional="YES" attributeType="String"/>
         <attribute name="task" attributeType="String"/>
+        <relationship name="tag" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Tag" inverseName="toDoItems" inverseEntity="Tag"/>
     </entity>
 </model>

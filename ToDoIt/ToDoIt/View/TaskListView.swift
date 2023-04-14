@@ -61,10 +61,6 @@ class TaskListView: UIView {
     @objc func newTaskButtonTapped() {
         presentTaskViewDelegate?.presentNewTaskView()
     }
-    
-    public func markTaskAsComplete() {
-        
-    }
 
     // MARK: - UI Setup
 

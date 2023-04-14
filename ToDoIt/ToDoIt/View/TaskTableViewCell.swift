@@ -7,27 +7,11 @@
 
 import UIKit
 
-//protocol MarkTaskAsCompleteDelegate: AnyObject {
-//    func markTaskAsComplete()
-//}
-
 class TaskTableViewCell: UITableViewCell {
 
     static let taskTableViewCellIdentifier = "TaskTableViewCell"
-    
-//    var markTaskAsCompleteDelegate: MarkTaskAsCompleteDelegate?
-    
+        
     // MARK: - UI Properties
-    
-//    lazy var checkboxButtonView: UIButton = {
-//        let checkbox = UIButton()
-//        checkbox.translatesAutoresizingMaskIntoConstraints = false
-//        let config = UIImage.SymbolConfiguration(pointSize: 20)
-//        checkbox.setImage(UIImage(systemName: "square", withConfiguration: config), for: .normal)
-//        checkbox.addTarget(self, action: #selector(checkboxButtonTapped), for: .touchUpInside)
-//        checkbox.tintColor = .black
-//        return checkbox
-//    }()
 
     let taskFieldView: UITextView = {
         let field = UITextView()
@@ -57,11 +41,7 @@ class TaskTableViewCell: UITableViewCell {
     }
     
     // MARK: - Functions
-    
-//    @objc func checkboxButtonTapped() {
-//        markTaskAsCompleteDelegate?.markTaskAsComplete()
-//    }
-    
+
     func configureTask(task: ToDoItem) {
         taskFieldView.text = task.task
         tagView.text = task.tag
@@ -70,14 +50,10 @@ class TaskTableViewCell: UITableViewCell {
     // MARK: - UI Setup
     
     private func configureViews() {
-//        addSubview(checkboxButtonView)
         addSubview(taskFieldView)
         addSubview(tagView)
         
         NSLayoutConstraint.activate([
-//            checkboxButtonView.centerYAnchor.constraint(equalTo: centerYAnchor),
-//            checkboxButtonView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 5),
-            
             taskFieldView.centerYAnchor.constraint(equalTo: centerYAnchor),
             taskFieldView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 3),
             taskFieldView.trailingAnchor.constraint(equalTo: trailingAnchor),
@@ -87,5 +63,4 @@ class TaskTableViewCell: UITableViewCell {
             tagView.leadingAnchor.constraint(equalTo: taskFieldView.leadingAnchor, constant: 6),
         ])
     }
-
 }

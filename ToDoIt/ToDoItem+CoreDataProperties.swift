@@ -2,7 +2,7 @@
 //  ToDoItem+CoreDataProperties.swift
 //  ToDoIt
 //
-//  Created by Caroline Frey on 4/3/23.
+//  Created by Caroline Frey on 4/11/23.
 //
 //
 
@@ -16,9 +16,26 @@ extension ToDoItem {
         return NSFetchRequest<ToDoItem>(entityName: "ToDoItem")
     }
 
-    @NSManaged public var task: String?
     @NSManaged public var tag: String?
-//    @NSManaged public var date: Date?
+    @NSManaged public var task: String?
+    @NSManaged public var tags: NSSet?
+
+}
+
+// MARK: Generated accessors for tags
+extension ToDoItem {
+
+    @objc(addTagsObject:)
+    @NSManaged public func addToTags(_ value: Tag)
+
+    @objc(removeTagsObject:)
+    @NSManaged public func removeFromTags(_ value: Tag)
+
+    @objc(addTags:)
+    @NSManaged public func addToTags(_ values: NSSet)
+
+    @objc(removeTags:)
+    @NSManaged public func removeFromTags(_ values: NSSet)
 
 }
 

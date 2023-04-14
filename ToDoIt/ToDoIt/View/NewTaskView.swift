@@ -12,7 +12,7 @@ protocol PopViewDelegate: AnyObject {
 }
 
 protocol SaveTaskDelegate: AnyObject {
-    func saveTask()
+    func saveTask(task: String)
 }
 
 class NewTaskView: UIView {
@@ -79,11 +79,8 @@ class NewTaskView: UIView {
         popViewDelegate?.popView()
     }
     
-    @objc func saveTaskButtonTapped() {
-        DataManager.saveTask(task: taskFieldView.text, tag: "") //TODO: - insert tag
-        
-        let newTask = Task(task: taskFieldView.text)
-        saveTaskDelegate?.saveTask()
+    @objc func saveTaskButtonTapped() {        
+        saveTaskDelegate?.saveTask(task: taskFieldView.text)
         popViewDelegate?.popView()
     }
     

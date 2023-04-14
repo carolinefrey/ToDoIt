@@ -78,7 +78,6 @@ extension TaskListVC: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = contentView.tableView.dequeueReusableCell(withIdentifier: TaskTableViewCell.taskTableViewCellIdentifier) as! TaskTableViewCell
-//        cell.markTaskAsCompleteDelegate = self
         let currentTask = toDoItems[indexPath.row]
         cell.configureTask(task: currentTask)
         return cell
@@ -105,7 +104,7 @@ extension TaskListVC: UITableViewDelegate {
         let action = UIContextualAction(style: .normal, title: "Done") { [weak self] (action, view, completionHandler) in
             DataManager.deleteTask(task: (self?.toDoItems[indexPath.row])!)
             self?.toDoItems.remove(at: indexPath.row)
-            tableView.deleteRows(at: [indexPath], with: .fade)
+            tableView.deleteRows(at: [indexPath], with: .right)
             completionHandler(true)
         }
         action.backgroundColor = .systemGreen
@@ -121,11 +120,3 @@ extension TaskListVC: SaveTaskToListDelegate {
         self.contentView.tableView.reloadData()
     }
 }
-
-// MARK: - MarkTaskAsCompleteDelegate
-
-//extension TaskListVC: MarkTaskAsCompleteDelegate {
-//    func markTaskAsComplete(task: ) {
-//        DataManager.deleteTask(task: <#T##ToDoItem#>)
-//    }
-//}
