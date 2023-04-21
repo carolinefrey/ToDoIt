@@ -34,7 +34,7 @@ class TaskListVC: UIViewController {
     
     // MARK: - Lifecycle
     
-    override func viewDidLoad() {
+    override func viewWillAppear(_ animated: Bool) {
         fetchToDoItems()
         contentView.tableView.reloadData()
     }
@@ -64,7 +64,7 @@ class TaskListVC: UIViewController {
 extension TaskListVC: PresentNewTaskViewDelegate {
     func presentNewTaskView() {
         let newTaskVC = NewTaskVC(toDoItems: toDoItems)
-        newTaskVC.saveTaskToListDelegate = self
+        newTaskVC.updateTaskListDelegate = self
         navigationController?.pushViewController(newTaskVC, animated: true)
     }
 }
@@ -114,8 +114,8 @@ extension TaskListVC: UITableViewDelegate {
 
 // MARK: - AddNewTaskDelegate
 
-extension TaskListVC: SaveTaskToListDelegate {
-    func saveTaskToList() {
+extension TaskListVC: UpdateTaskListDelegate {
+    func updateTaskList() {
         fetchToDoItems()
         self.contentView.tableView.reloadData()
     }

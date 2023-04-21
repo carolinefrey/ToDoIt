@@ -7,26 +7,46 @@
 
 import UIKit
 
-protocol SaveTaskToListDelegate: AnyObject {
-    func saveTaskToList()
+protocol UpdateTaskListDelegate: AnyObject {
+    func updateTaskList()
 }
 
 class NewTaskVC: UIViewController {
     
+    // MARK: - Properties
+    
     private var contentView: NewTaskView!
     
-    var saveTaskToListDelegate: SaveTaskToListDelegate?
+    var updateTaskListDelegate: UpdateTaskListDelegate?
 
     var toDoItems: [ToDoItem]
-    var allTags: [Tag]
-    var selectedTag: Tag
+    var allTags: [String]
+    var selectedTag: String
+    
+    // MARK: UIBarButtonItems
+    
+    lazy var saveTaskButton: UIBarButtonItem = {
+        let config = UIImage.SymbolConfiguration(textStyle: .title1)
+        let icon = UIImage(systemName: "square.and.arrow.down", withConfiguration: config)
+        let button = UIBarButtonItem(image: icon, style: .plain, target: self, action: #selector(saveTaskButtonTapped))
+        button.tintColor = .black
+        return button
+    }()
+    
+    lazy var backButton: UIBarButtonItem = {
+        let config = UIImage.SymbolConfiguration(textStyle: .title2)
+        let icon = UIImage(systemName: "arrowshape.backward", withConfiguration: config)
+        let button = UIBarButtonItem(image: icon, style: .plain, target: self, action: #selector(backButtonTapped))
+        button.tintColor = .black
+        return button
+    }()
         
     // MARK: - Initializer
     
     init(toDoItems: [ToDoItem]) {
         self.toDoItems = toDoItems
         self.allTags = []
-        self.selectedTag = Tag()
+        self.selectedTag = ""
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -42,47 +62,57 @@ class NewTaskVC: UIViewController {
         contentView = NewTaskView()
         view = contentView
         
-        navigationItem.leftBarButtonItem = contentView.backButton
-        navigationItem.rightBarButtonItem = contentView.saveTaskButton
+        navigationItem.leftBarButtonItem = backButton
+        navigationItem.rightBarButtonItem = saveTaskButton
         
         setContentViewDelegates()
         
         contentView.tagsBoxView.tableView.register(TagsTableViewCell.self, forCellReuseIdentifier: TagsTableViewCell.tagsTableViewCellIdentifier)
         
-        fetchTags()
-        
+//        fetchTags()
     }
     
     // MARK: - Functions
     
-    private func fetchTags() {
-        DataManager.fetchTags { [weak self] tags in
-            if let fetchedTags = tags {
-                allTags = fetchedTags
-            }
-            DispatchQueue.main.async { [weak self] in
-                self?.contentView.tagsBoxView.tableView.reloadData()
-            }
-        }
-    }
+//    private func fetchTags() {
+//        DataManager.fetchTags { [weak self] tags in
+//            if let fetchedTags = tags {
+//                allTags = fetchedTags
+//            }
+//            DispatchQueue.main.async { [weak self] in
+//                self?.contentView.tagsBoxView.tableView.reloadData()
+//            }
+//        }
+//    }
     
     private func setContentViewDelegates() {
-        contentView.popViewDelegate = self
-        contentView.saveTaskDelegate = self
+//        contentView.popViewDelegate = self
+//        contentView.saveTaskDelegate = self
         
         contentView.tagsBoxView.presentNewTagViewDelegate = self
         contentView.tagsBoxView.tableView.delegate = self
         contentView.tagsBoxView.tableView.dataSource = self
     }
+    
+    @objc func saveTaskButtonTapped() {
+//        saveTaskDelegate?.saveTask(task: taskFieldView.text)
+        DataManager.saveTask(task: contentView.taskFieldView.text, tag: selectedTag)
+        updateTaskListDelegate?.updateTaskList()
+        navigationController?.popViewController(animated: true)
+    }
+    
+    @objc func backButtonTapped() {
+        navigationController?.popViewController(animated: true)
+    }
 }
 
 // MARK: - PopViewDelegate
 
-extension NewTaskVC: PopViewDelegate {
-    func popView() {
-        navigationController?.popViewController(animated: true)
-    }
-}
+//extension NewTaskVC: PopViewDelegate {
+//    func popView() {
+//        navigationController?.popViewController(animated: true)
+//    }
+//}
 
 // MARK: - PresentNewTagViewDelegate
 
@@ -94,9 +124,9 @@ extension NewTaskVC: PresentNewTagViewDelegate {
         let done = UIAlertAction(title: "Done", style: .default) { [unowned addTagAlert] _ in
             let tag = addTagAlert.textFields![0]
             if let newTag = tag.text {
-                DataManager.saveTag(tag: newTag)
+                self.allTags.append(newTag)
             }
-            self.fetchTags()
+//            self.fetchTags()
             self.contentView.tagsBoxView.tableView.reloadData()
         }
         
@@ -111,12 +141,12 @@ extension NewTaskVC: PresentNewTagViewDelegate {
 
 // MARK: - SaveTaskButtonTappedDelegate
 
-extension NewTaskVC: SaveTaskDelegate {
-    func saveTask(task: String) {
-        DataManager.saveTask(task: task, tag: selectedTag.tag)
-        saveTaskToListDelegate?.saveTaskToList()
-    }
-}
+//extension NewTaskVC: SaveTaskDelegate {
+//    func saveTask(task: String) {
+//        DataManager.saveTask(task: task, tag: selectedTag.tag)
+//        updateTaskListDelegate?.updateTaskList()
+//    }
+//}
 
 // MARK: - UITableViewDataSource (Tags box)
 
@@ -127,7 +157,7 @@ extension NewTaskVC: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = contentView.tagsBoxView.tableView.dequeueReusableCell(withIdentifier: TagsTableViewCell.tagsTableViewCellIdentifier) as! TagsTableViewCell
-        cell.configureTag(tag: allTags[indexPath.row].tag ?? "") //TODO: - why is this optional?
+        cell.configureTag(tag: allTags[indexPath.row])
         return cell
     }
 }
@@ -136,13 +166,6 @@ extension NewTaskVC: UITableViewDataSource {
 
 extension NewTaskVC: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        //TODO: add tag to task here
-        
-        //  when a tag is selected from the table, create a (ToDoItem, Tag) tuple
-        //  when any "save" function is called, pass this tuple through
-        
-        // LEFT OFF:
-        //  var taskAndTag: (ToDoItem, Tag)
         selectedTag = allTags[indexPath.row]
     }
 }
