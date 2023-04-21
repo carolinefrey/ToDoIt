@@ -62,7 +62,7 @@ class DataManager {
     
     // MARK: - Update
     
-    static func updateTask(toDoItem: ToDoItem, task: String, tag: String) {
+    static func updateTask(toDoItem: ToDoItem, task: String?, tag: String?) {
         toDoItem.task = task
         toDoItem.tag = tag
         

@@ -7,18 +7,7 @@
 
 import UIKit
 
-//protocol PopViewDelegate: AnyObject {
-//    func popView()
-//}
-
-//protocol SaveTaskDelegate: AnyObject {
-//    func saveTask(task: String)
-//}
-
 class NewTaskView: UIView {
-    
-//    var popViewDelegate: PopViewDelegate?
-//    var saveTaskDelegate: SaveTaskDelegate?
 
     // MARK: - UI Properties
     
@@ -30,22 +19,6 @@ class NewTaskView: UIView {
         newTaskTitle.textAlignment = .left
         return newTaskTitle
     }()
-    
-//    lazy var backButton: UIBarButtonItem = {
-//        let config = UIImage.SymbolConfiguration(textStyle: .title2)
-//        let icon = UIImage(systemName: "arrowshape.backward", withConfiguration: config)
-//        let button = UIBarButtonItem(image: icon, style: .plain, target: self, action: #selector(backButtonTapped))
-//        button.tintColor = .black
-//        return button
-//    }()
-    
-//    lazy var saveTaskButton: UIBarButtonItem = {
-//        let config = UIImage.SymbolConfiguration(textStyle: .title1)
-//        let icon = UIImage(systemName: "square.and.arrow.down", withConfiguration: config)
-//        let button = UIBarButtonItem(image: icon, style: .plain, target: self, action: #selector(saveTaskButtonTapped))
-//        button.tintColor = .black
-//        return button
-//    }()
     
     let taskFieldView: UITextView = {
         let field = UITextView()
@@ -72,17 +45,6 @@ class NewTaskView: UIView {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    // MARK: - Functions
-    
-//    @objc func backButtonTapped() {
-//        popViewDelegate?.popView()
-//    }
-    
-//    @objc func saveTaskButtonTapped() {        
-//        saveTaskDelegate?.saveTask(task: taskFieldView.text)
-//        popViewDelegate?.popView()
-//    }
     
     // MARK: - UI Setup
     

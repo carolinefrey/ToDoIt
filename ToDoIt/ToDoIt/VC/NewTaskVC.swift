@@ -20,7 +20,7 @@ class NewTaskVC: UIViewController {
     var updateTaskListDelegate: UpdateTaskListDelegate?
 
     var toDoItems: [ToDoItem]
-    var allTags: [String]
+    var allTags: [String] = []
     var selectedTag: String
     
     // MARK: UIBarButtonItems
@@ -45,8 +45,16 @@ class NewTaskVC: UIViewController {
     
     init(toDoItems: [ToDoItem]) {
         self.toDoItems = toDoItems
-        self.allTags = []
         self.selectedTag = ""
+        
+        for task in toDoItems {
+            if let taskTag = task.tag {
+                if taskTag != "" && !allTags.contains(taskTag) {
+                    allTags.append(taskTag)
+                }
+            }
+        }
+        
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -68,34 +76,15 @@ class NewTaskVC: UIViewController {
         setContentViewDelegates()
         
         contentView.tagsBoxView.tableView.register(TagsTableViewCell.self, forCellReuseIdentifier: TagsTableViewCell.tagsTableViewCellIdentifier)
-        
-//        fetchTags()
     }
     
-    // MARK: - Functions
-    
-//    private func fetchTags() {
-//        DataManager.fetchTags { [weak self] tags in
-//            if let fetchedTags = tags {
-//                allTags = fetchedTags
-//            }
-//            DispatchQueue.main.async { [weak self] in
-//                self?.contentView.tagsBoxView.tableView.reloadData()
-//            }
-//        }
-//    }
-    
     private func setContentViewDelegates() {
-//        contentView.popViewDelegate = self
-//        contentView.saveTaskDelegate = self
-        
         contentView.tagsBoxView.presentNewTagViewDelegate = self
         contentView.tagsBoxView.tableView.delegate = self
         contentView.tagsBoxView.tableView.dataSource = self
     }
     
     @objc func saveTaskButtonTapped() {
-//        saveTaskDelegate?.saveTask(task: taskFieldView.text)
         DataManager.saveTask(task: contentView.taskFieldView.text, tag: selectedTag)
         updateTaskListDelegate?.updateTaskList()
         navigationController?.popViewController(animated: true)
@@ -105,14 +94,6 @@ class NewTaskVC: UIViewController {
         navigationController?.popViewController(animated: true)
     }
 }
-
-// MARK: - PopViewDelegate
-
-//extension NewTaskVC: PopViewDelegate {
-//    func popView() {
-//        navigationController?.popViewController(animated: true)
-//    }
-//}
 
 // MARK: - PresentNewTagViewDelegate
 
@@ -124,9 +105,10 @@ extension NewTaskVC: PresentNewTagViewDelegate {
         let done = UIAlertAction(title: "Done", style: .default) { [unowned addTagAlert] _ in
             let tag = addTagAlert.textFields![0]
             if let newTag = tag.text {
-                self.allTags.append(newTag)
+                if !self.allTags.contains(newTag) {
+                    self.allTags.append(newTag)
+                }
             }
-//            self.fetchTags()
             self.contentView.tagsBoxView.tableView.reloadData()
         }
         
@@ -138,15 +120,6 @@ extension NewTaskVC: PresentNewTagViewDelegate {
         self.present(addTagAlert, animated: true)
     }
 }
-
-// MARK: - SaveTaskButtonTappedDelegate
-
-//extension NewTaskVC: SaveTaskDelegate {
-//    func saveTask(task: String) {
-//        DataManager.saveTask(task: task, tag: selectedTag.tag)
-//        updateTaskListDelegate?.updateTaskList()
-//    }
-//}
 
 // MARK: - UITableViewDataSource (Tags box)
 
@@ -167,5 +140,18 @@ extension NewTaskVC: UITableViewDataSource {
 extension NewTaskVC: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         selectedTag = allTags[indexPath.row]
+    }
+    
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            // clear tag field of any existing tags that contain the tag being deleted
+            for task in toDoItems {
+                if task.tag == allTags[indexPath.row] {
+                    task.tag = ""
+                }
+            }
+            allTags.remove(at: indexPath.row)
+            tableView.deleteRows(at: [indexPath], with: .fade)
+        }
     }
 }
