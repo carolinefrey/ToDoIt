@@ -16,8 +16,9 @@ class TagsTableViewCell: UITableViewCell {
     let tagView: UILabel = {
         let tag = UILabel()
         tag.translatesAutoresizingMaskIntoConstraints = false
-        tag.font = .systemFont(ofSize: 12)
+        tag.font = .systemFont(ofSize: 18)
         tag.textColor = .black
+        tag.backgroundColor = .lightGray
         return tag
     }()
     

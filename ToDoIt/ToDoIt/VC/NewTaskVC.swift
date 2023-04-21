@@ -139,7 +139,18 @@ extension NewTaskVC: UITableViewDataSource {
 
 extension NewTaskVC: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if let cell = contentView.tagsBoxView.tableView.cellForRow(at: indexPath) as? TagsTableViewCell {
+            cell.accessoryType = .checkmark
+            cell.tintColor = .black
+        }
         selectedTag = allTags[indexPath.row]
+    }
+    
+    func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
+        if let cell = contentView.tagsBoxView.tableView.cellForRow(at: indexPath) as? TagsTableViewCell {
+            cell.accessoryType = .none
+        }
+        selectedTag = ""
     }
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {

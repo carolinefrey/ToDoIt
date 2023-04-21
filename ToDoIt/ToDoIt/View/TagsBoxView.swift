@@ -50,7 +50,7 @@ class TagsBoxView: UIView {
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.clipsToBounds = true
         tableView.layer.cornerRadius = 10
-        tableView.rowHeight = 20
+        tableView.rowHeight = 30
         tableView.separatorStyle = .none
         tableView.backgroundColor = .lightGray
         return tableView
