@@ -20,7 +20,7 @@ class NewTaskVC: UIViewController {
     var updateTaskListDelegate: UpdateTaskListDelegate?
 
     var toDoItems: [ToDoItem]
-    var allTags: [String] = []
+    var allTags: [String]
     var selectedTag: String
     
     // MARK: UIBarButtonItems
@@ -43,17 +43,18 @@ class NewTaskVC: UIViewController {
         
     // MARK: - Initializer
     
-    init(toDoItems: [ToDoItem]) {
+    init(toDoItems: [ToDoItem], allTags: [String]) {
         self.toDoItems = toDoItems
+        self.allTags = allTags
         self.selectedTag = ""
-        
-        for task in toDoItems {
-            if let taskTag = task.tag {
-                if taskTag != "" && !allTags.contains(taskTag) {
-                    allTags.append(taskTag)
-                }
-            }
-        }
+
+//        for task in toDoItems {
+//            if let taskTag = task.tag {
+//                if taskTag != "" && !allTags.contains(taskTag) {
+//                    allTags.append(taskTag)
+//                }
+//            }
+//        }
         
         super.init(nibName: nil, bundle: nil)
     }

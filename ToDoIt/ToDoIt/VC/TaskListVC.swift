@@ -14,22 +14,26 @@ class TaskListVC: UIViewController {
     private var contentView: TaskListView!
     
     var toDoItems: [ToDoItem] = []
+    var allTags: [String] = []
+    var filteredToDoItems: [ToDoItem] = []
+    var filter: String = ""
     
     // MARK: - Lifecycle
 
     override func loadView() {
         super.loadView()
-        contentView = TaskListView()
+        
+        fetchToDoItems()
+        
+        contentView = TaskListView(toDoItems: toDoItems, allTags: allTags)
         view = contentView
         
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: contentView.todayTitle)
-        navigationItem.rightBarButtonItem = contentView.newTaskButton
+        navigationItem.rightBarButtonItems = [contentView.newTaskButton, contentView.filterButton]
         
         setContentViewDelegates()
         
         contentView.tableView.register(TaskTableViewCell.self, forCellReuseIdentifier: TaskTableViewCell.taskTableViewCellIdentifier)
-        
-        fetchToDoItems()
     }
     
     // MARK: - Lifecycle
@@ -56,6 +60,14 @@ class TaskListVC: UIViewController {
                 self?.contentView.tableView.reloadData()
             }
         }
+        // iterate through tasks and append tags to allTags array, avoiding dupes
+        for task in toDoItems {
+            if let taskTag = task.tag {
+                if taskTag != "" && !allTags.contains(taskTag) {
+                    allTags.append(taskTag)
+                }
+            }
+        }
     }
 }
 
@@ -63,7 +75,7 @@ class TaskListVC: UIViewController {
 
 extension TaskListVC: PresentNewTaskViewDelegate {
     func presentNewTaskView() {
-        let newTaskVC = NewTaskVC(toDoItems: toDoItems)
+        let newTaskVC = NewTaskVC(toDoItems: toDoItems, allTags: allTags)
         newTaskVC.updateTaskListDelegate = self
         navigationController?.pushViewController(newTaskVC, animated: true)
     }

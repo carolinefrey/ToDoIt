@@ -14,6 +14,9 @@ protocol PresentNewTaskViewDelegate: AnyObject {
 class TaskListView: UIView {
 
     var presentTaskViewDelegate: PresentNewTaskViewDelegate?
+    var toDoItems: [ToDoItem]
+    var allTags: [String]
+    var filterMenuItems = UIMenu()
     
     // MARK: - UI Properties
     
@@ -24,6 +27,14 @@ class TaskListView: UIView {
         todayTitle.text = "Today"
         todayTitle.textAlignment = .left
         return todayTitle
+    }()
+    
+    lazy var filterButton: UIBarButtonItem = {
+        let config = UIImage.SymbolConfiguration(textStyle: .title1)
+        let icon = UIImage(systemName: "line.3.horizontal.decrease.circle", withConfiguration: config)
+        let button = UIBarButtonItem(image: icon, menu: filterMenuItems)
+        button.tintColor = .black
+        return button
     }()
     
     lazy var newTaskButton: UIBarButtonItem = {
@@ -46,9 +57,14 @@ class TaskListView: UIView {
     
     // MARK: - Initializers
     
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    init(toDoItems: [ToDoItem], allTags: [String]) {
+        self.toDoItems = toDoItems
+        self.allTags = allTags
+        
+        super.init(frame: .zero)
+
         backgroundColor = .white
+        configureFilterOptions()
         configureViews()
     }
     
@@ -57,6 +73,16 @@ class TaskListView: UIView {
     }
     
     // MARK: - Functions
+    
+    private func configureFilterOptions() {
+        var filterOptions: [UIAction] = []
+        
+        for tag in allTags {
+            filterOptions.append(UIAction(title: "\(tag)", handler: { _ in }))
+        }
+        
+        filterMenuItems = UIMenu(title: "Filter by tag", options: .displayInline, children: filterOptions)
+    }
     
     @objc func newTaskButtonTapped() {
         presentTaskViewDelegate?.presentNewTaskView()
