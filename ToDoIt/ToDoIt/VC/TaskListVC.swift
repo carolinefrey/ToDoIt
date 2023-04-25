@@ -16,7 +16,7 @@ class TaskListVC: UIViewController {
     var toDoItems: [ToDoItem] = []
     var allTags: [String] = []
     var filteredToDoItems: [ToDoItem] = []
-    var filter: String = ""
+    var selectedFilter: String = ""
     
     // MARK: - Lifecycle
 
@@ -29,7 +29,7 @@ class TaskListVC: UIViewController {
         view = contentView
         
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: contentView.todayTitle)
-        navigationItem.rightBarButtonItems = [contentView.newTaskButton, contentView.filterButton]
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: contentView.navBarButtonStackView)
         
         setContentViewDelegates()
         
@@ -47,6 +47,7 @@ class TaskListVC: UIViewController {
     
     private func setContentViewDelegates() {
         contentView.presentTaskViewDelegate = self
+        contentView.filterTasksBySelectedTagDelegate = self
         contentView.tableView.dataSource = self
         contentView.tableView.delegate = self
     }
@@ -81,17 +82,47 @@ extension TaskListVC: PresentNewTaskViewDelegate {
     }
 }
 
+// MARK: - FilterTasksBySelectedTagDelegate
+
+extension TaskListVC: FilterTasksBySelectedTagDelegate {
+    func filterTasksBySelectedTag(tag: String) {
+        //if user taps selected tag again, show all to do items and reset menu
+        if selectedFilter == tag {
+            filteredToDoItems = []
+            contentView.filterButton.setImage(UIImage(systemName: "line.3.horizontal.decrease.circle", withConfiguration: UIImage.SymbolConfiguration(textStyle: .title1)), for: .normal)
+        } else {
+            selectedFilter = tag
+            filteredToDoItems = []
+            for task in toDoItems {
+                if task.tag == selectedFilter {
+                    filteredToDoItems.append(task)
+                }
+            }
+            contentView.filterButton.setImage(UIImage(systemName: "line.3.horizontal.decrease.circle.fill", withConfiguration: UIImage.SymbolConfiguration(textStyle: .title1)), for: .normal)
+        }
+        contentView.tableView.reloadData()
+    }
+}
+
 // MARK: - UITableViewDataSource
 
 extension TaskListVC: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        toDoItems.count
+        if filteredToDoItems.count != 0 {
+            return filteredToDoItems.count
+        } else {
+            return toDoItems.count
+        }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = contentView.tableView.dequeueReusableCell(withIdentifier: TaskTableViewCell.taskTableViewCellIdentifier) as! TaskTableViewCell
-        let currentTask = toDoItems[indexPath.row]
-        cell.configureTask(task: currentTask)
+        
+        if filteredToDoItems.count != 0 {
+            cell.configureTask(task: filteredToDoItems[indexPath.row])
+        } else {
+            cell.configureTask(task: toDoItems[indexPath.row])
+        }
         return cell
     }
 }
@@ -99,9 +130,15 @@ extension TaskListVC: UITableViewDataSource {
 // MARK: - UITableViewDelegate
 
 extension TaskListVC: UITableViewDelegate {
+//    func tableView(_ tableView: UITableView, canFocusRowAt indexPath: IndexPath) -> Bool {
+//        return true
+//    }
+//    func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+//        return true
+//    }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        // TODO: - Implement task editing
-        //  either directly in cell or present an alert with a textField
+        // TODO: - Implement task editing directly in cell
+        tableView.deselectRow(at: indexPath, animated: true)
     }
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {

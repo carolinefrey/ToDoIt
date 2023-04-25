@@ -26,16 +26,14 @@ class NewTaskVC: UIViewController {
     // MARK: UIBarButtonItems
     
     lazy var saveTaskButton: UIBarButtonItem = {
-        let config = UIImage.SymbolConfiguration(textStyle: .title1)
-        let icon = UIImage(systemName: "square.and.arrow.down", withConfiguration: config)
+        let icon = UIImage(systemName: "square.and.arrow.down", withConfiguration: UIImage.SymbolConfiguration(textStyle: .title1))
         let button = UIBarButtonItem(image: icon, style: .plain, target: self, action: #selector(saveTaskButtonTapped))
         button.tintColor = .black
         return button
     }()
     
     lazy var backButton: UIBarButtonItem = {
-        let config = UIImage.SymbolConfiguration(textStyle: .title2)
-        let icon = UIImage(systemName: "arrowshape.backward", withConfiguration: config)
+        let icon = UIImage(systemName: "arrowshape.backward", withConfiguration: UIImage.SymbolConfiguration(textStyle: .title2))
         let button = UIBarButtonItem(image: icon, style: .plain, target: self, action: #selector(backButtonTapped))
         button.tintColor = .black
         return button
@@ -47,14 +45,6 @@ class NewTaskVC: UIViewController {
         self.toDoItems = toDoItems
         self.allTags = allTags
         self.selectedTag = ""
-
-//        for task in toDoItems {
-//            if let taskTag = task.tag {
-//                if taskTag != "" && !allTags.contains(taskTag) {
-//                    allTags.append(taskTag)
-//                }
-//            }
-//        }
         
         super.init(nibName: nil, bundle: nil)
     }
@@ -78,6 +68,12 @@ class NewTaskVC: UIViewController {
         
         contentView.tagsBoxView.tableView.register(TagsTableViewCell.self, forCellReuseIdentifier: TagsTableViewCell.tagsTableViewCellIdentifier)
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        contentView.tagsBoxView.tableView.reloadData()
+    }
+    
+    // MARK: - Functions
     
     private func setContentViewDelegates() {
         contentView.tagsBoxView.presentNewTagViewDelegate = self
