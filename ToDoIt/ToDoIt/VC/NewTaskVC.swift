@@ -19,8 +19,10 @@ class NewTaskVC: UIViewController {
     
     var updateTaskListDelegate: UpdateTaskListDelegate?
 
-    var toDoItems: [ToDoItem]
-    var allTags: [String]
+//    var toDoItems: [ToDoItem]
+//    var allTags: [String]
+    var toDoItems: Tasks
+    var allTags: Tags
     var selectedTag: String
     
     // MARK: UIBarButtonItems
@@ -41,7 +43,7 @@ class NewTaskVC: UIViewController {
         
     // MARK: - Initializer
     
-    init(toDoItems: [ToDoItem], allTags: [String]) {
+    init(toDoItems: Tasks, allTags: Tags) {
         self.toDoItems = toDoItems
         self.allTags = allTags
         self.selectedTag = ""
@@ -82,7 +84,7 @@ class NewTaskVC: UIViewController {
     }
     
     @objc func saveTaskButtonTapped() {
-        DataManager.saveTask(task: contentView.taskFieldView.text, tag: selectedTag)
+        DataManager.saveTask(allTasks: toDoItems, task: contentView.taskFieldView.text, tag: selectedTag)
         updateTaskListDelegate?.updateTaskList()
         navigationController?.popViewController(animated: true)
     }
@@ -102,8 +104,8 @@ extension NewTaskVC: PresentNewTagViewDelegate {
         let done = UIAlertAction(title: "Done", style: .default) { [unowned addTagAlert] _ in
             let tag = addTagAlert.textFields![0]
             if let newTag = tag.text {
-                if !self.allTags.contains(newTag) {
-                    self.allTags.append(newTag)
+                if !self.allTags.tags.contains(newTag) {
+                    self.allTags.tags.append(newTag)
                 }
             }
             self.contentView.tagsBoxView.tableView.reloadData()
@@ -122,12 +124,12 @@ extension NewTaskVC: PresentNewTagViewDelegate {
 
 extension NewTaskVC: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        allTags.count
+        allTags.tags.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = contentView.tagsBoxView.tableView.dequeueReusableCell(withIdentifier: TagsTableViewCell.tagsTableViewCellIdentifier) as! TagsTableViewCell
-        cell.configureTag(tag: allTags[indexPath.row])
+        cell.configureTag(tag: allTags.tags[indexPath.row])
         return cell
     }
 }
@@ -140,7 +142,7 @@ extension NewTaskVC: UITableViewDelegate {
             cell.accessoryType = .checkmark
             cell.tintColor = .black
         }
-        selectedTag = allTags[indexPath.row]
+        selectedTag = allTags.tags[indexPath.row]
     }
     
     func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
@@ -153,12 +155,12 @@ extension NewTaskVC: UITableViewDelegate {
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             // clear tag field of any existing tags that contain the tag being deleted
-            for task in toDoItems {
-                if task.tag == allTags[indexPath.row] {
+            for task in toDoItems.tasks {
+                if task.tag == allTags.tags[indexPath.row] {
                     task.tag = ""
                 }
             }
-            allTags.remove(at: indexPath.row)
+            allTags.tags.remove(at: indexPath.row)
             tableView.deleteRows(at: [indexPath], with: .fade)
         }
     }

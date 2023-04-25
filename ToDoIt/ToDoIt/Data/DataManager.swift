@@ -9,8 +9,40 @@ import Foundation
 import CoreData
 import UIKit
 
-class DataManager {
+class Tasks {
+    var tasks: [ToDoItem]
     
+    init() {
+        var temp: [ToDoItem] = []
+        DataManager.fetchTasks { tasks in
+            if let fetchedTasks = tasks {
+                temp = fetchedTasks
+            }
+        }
+        self.tasks = temp
+    }
+}
+
+class Tags {
+    var tasks: Tasks
+    var tags: [String]
+    
+    init(tasks: Tasks) {
+        var temp: [String] = []
+        self.tasks = tasks
+        // iterate through tasks and append tags to allTags array, avoiding dupes
+        for toDoItem in tasks.tasks {
+            if let taskTag = toDoItem.tag {
+                if taskTag != "" && !temp.contains(taskTag) {
+                    temp.append(taskTag)
+                }
+            }
+        }
+        self.tags = temp
+    }
+}
+
+class DataManager {
     static let managedObjectContext: NSManagedObjectContext = {
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         return appDelegate.persistentContainer.viewContext
@@ -18,11 +50,13 @@ class DataManager {
     
     // MARK: - Create
     
-    static func saveTask(task: String, tag: String?) {
+    static func saveTask(allTasks: Tasks, task: String, tag: String?) {
         let toDoItem = ToDoItem(context: managedObjectContext)
         toDoItem.task = task
         toDoItem.tag = tag
 
+        allTasks.tasks.append(toDoItem)
+        
         do {
             try managedObjectContext.save()
         }

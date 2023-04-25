@@ -13,19 +13,28 @@ class TaskListVC: UIViewController {
     
     private var contentView: TaskListView!
     
-    var toDoItems: [ToDoItem] = []
-    var allTags: [String] = []
+    var toDoItems = Tasks()
+    var allTags: Tags
     var filteredToDoItems: [ToDoItem] = []
     var selectedFilter: String = ""
+    
+    // MARK: - Initializer
+    
+    init() {
+        allTags = Tags(tasks: toDoItems)
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     // MARK: - Lifecycle
 
     override func loadView() {
         super.loadView()
-        
-        fetchToDoItems()
-        
-        contentView = TaskListView(toDoItems: toDoItems, allTags: allTags)
+                    
+        contentView = TaskListView(toDoItems: toDoItems.tasks, allTags: allTags.tags)
         view = contentView
         
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: contentView.todayTitle)
@@ -36,10 +45,7 @@ class TaskListVC: UIViewController {
         contentView.tableView.register(TaskTableViewCell.self, forCellReuseIdentifier: TaskTableViewCell.taskTableViewCellIdentifier)
     }
     
-    // MARK: - Lifecycle
-    
     override func viewWillAppear(_ animated: Bool) {
-        fetchToDoItems()
         contentView.tableView.reloadData()
     }
     
@@ -50,25 +56,6 @@ class TaskListVC: UIViewController {
         contentView.filterTasksBySelectedTagDelegate = self
         contentView.tableView.dataSource = self
         contentView.tableView.delegate = self
-    }
-    
-    private func fetchToDoItems() {
-        DataManager.fetchTasks { [weak self] tasks in
-            if let fetchedTasks = tasks {
-                toDoItems = fetchedTasks
-            }
-            DispatchQueue.main.async { [weak self] in
-                self?.contentView.tableView.reloadData()
-            }
-        }
-        // iterate through tasks and append tags to allTags array, avoiding dupes
-        for task in toDoItems {
-            if let taskTag = task.tag {
-                if taskTag != "" && !allTags.contains(taskTag) {
-                    allTags.append(taskTag)
-                }
-            }
-        }
     }
 }
 
@@ -93,7 +80,7 @@ extension TaskListVC: FilterTasksBySelectedTagDelegate {
         } else {
             selectedFilter = tag
             filteredToDoItems = []
-            for task in toDoItems {
+            for task in toDoItems.tasks {
                 if task.tag == selectedFilter {
                     filteredToDoItems.append(task)
                 }
@@ -111,7 +98,7 @@ extension TaskListVC: UITableViewDataSource {
         if filteredToDoItems.count != 0 {
             return filteredToDoItems.count
         } else {
-            return toDoItems.count
+            return toDoItems.tasks.count
         }
     }
     
@@ -121,7 +108,7 @@ extension TaskListVC: UITableViewDataSource {
         if filteredToDoItems.count != 0 {
             cell.configureTask(task: filteredToDoItems[indexPath.row])
         } else {
-            cell.configureTask(task: toDoItems[indexPath.row])
+            cell.configureTask(task: toDoItems.tasks[indexPath.row])
         }
         return cell
     }
@@ -143,16 +130,16 @@ extension TaskListVC: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
-            DataManager.deleteTask(task: toDoItems[indexPath.row])
-            toDoItems.remove(at: indexPath.row)
+            DataManager.deleteTask(task: toDoItems.tasks[indexPath.row])
+            toDoItems.tasks.remove(at: indexPath.row)
             tableView.deleteRows(at: [indexPath], with: .fade)
         }
     }
     
     func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let action = UIContextualAction(style: .normal, title: "Done") { [weak self] (action, view, completionHandler) in
-            DataManager.deleteTask(task: (self?.toDoItems[indexPath.row])!)
-            self?.toDoItems.remove(at: indexPath.row)
+            DataManager.deleteTask(task: (self?.toDoItems.tasks[indexPath.row])!)
+            self?.toDoItems.tasks.remove(at: indexPath.row)
             tableView.deleteRows(at: [indexPath], with: .right)
             completionHandler(true)
         }
@@ -165,7 +152,7 @@ extension TaskListVC: UITableViewDelegate {
 
 extension TaskListVC: UpdateTaskListDelegate {
     func updateTaskList() {
-        fetchToDoItems()
+//        fetchToDoItems()
         self.contentView.tableView.reloadData()
     }
 }
