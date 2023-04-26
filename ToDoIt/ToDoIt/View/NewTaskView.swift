@@ -23,7 +23,7 @@ class NewTaskView: UIView {
     let taskFieldView: UITextView = {
         let field = UITextView()
         field.translatesAutoresizingMaskIntoConstraints = false
-        field.returnKeyType = .default
+        field.returnKeyType = .done
         field.font = .systemFont(ofSize: 16)
         return field
     }()

@@ -110,9 +110,9 @@ class DataManager {
     
     // MARK: - Delete
     
-    static func deleteTask(task: ToDoItem) {
-        managedObjectContext.delete(task)
-        
+    static func deleteTask(allTasks: Tasks, taskToDelete: ToDoItem) {
+        managedObjectContext.delete(taskToDelete)
+        allTasks.tasks.removeAll { $0 == taskToDelete }
         do {
             try managedObjectContext.save()
         }

@@ -19,8 +19,6 @@ class NewTaskVC: UIViewController {
     
     var updateTaskListDelegate: UpdateTaskListDelegate?
 
-//    var toDoItems: [ToDoItem]
-//    var allTags: [String]
     var toDoItems: Tasks
     var allTags: Tags
     var selectedTag: String
@@ -31,6 +29,7 @@ class NewTaskVC: UIViewController {
         let icon = UIImage(systemName: "square.and.arrow.down", withConfiguration: UIImage.SymbolConfiguration(textStyle: .title1))
         let button = UIBarButtonItem(image: icon, style: .plain, target: self, action: #selector(saveTaskButtonTapped))
         button.tintColor = .black
+        button.isEnabled = false //disable button until user enters text
         return button
     }()
     
@@ -78,13 +77,14 @@ class NewTaskVC: UIViewController {
     // MARK: - Functions
     
     private func setContentViewDelegates() {
+        contentView.taskFieldView.delegate = self
         contentView.tagsBoxView.presentNewTagViewDelegate = self
         contentView.tagsBoxView.tableView.delegate = self
         contentView.tagsBoxView.tableView.dataSource = self
     }
     
     @objc func saveTaskButtonTapped() {
-        DataManager.saveTask(allTasks: toDoItems, task: contentView.taskFieldView.text, tag: selectedTag)
+        DataManager.saveTask(allTasks: toDoItems, task: contentView.taskFieldView.text!, tag: selectedTag)
         updateTaskListDelegate?.updateTaskList()
         navigationController?.popViewController(animated: true)
     }
@@ -117,6 +117,23 @@ extension NewTaskVC: PresentNewTagViewDelegate {
         addTagAlert.addAction(cancel)
         
         self.present(addTagAlert, animated: true)
+    }
+}
+
+// MARK: - UITextFieldDelegate
+
+
+extension NewTaskVC: UITextViewDelegate {
+    func textViewDidChange(_ textView: UITextView) {
+        if contentView.taskFieldView.text != "" {
+            saveTaskButton.isEnabled = true
+        } else {
+            saveTaskButton.isEnabled = false
+        }
+    }
+    func textFieldShouldReturn(_ textView: UITextView) -> Bool {
+        self.view.endEditing(true)
+        return false
     }
 }
 

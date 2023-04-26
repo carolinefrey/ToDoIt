@@ -130,16 +130,14 @@ extension TaskListVC: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
-            DataManager.deleteTask(task: toDoItems.tasks[indexPath.row])
-            toDoItems.tasks.remove(at: indexPath.row)
+            DataManager.deleteTask(allTasks: toDoItems, taskToDelete: toDoItems.tasks[indexPath.row])
             tableView.deleteRows(at: [indexPath], with: .fade)
         }
     }
     
     func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let action = UIContextualAction(style: .normal, title: "Done") { [weak self] (action, view, completionHandler) in
-            DataManager.deleteTask(task: (self?.toDoItems.tasks[indexPath.row])!)
-            self?.toDoItems.tasks.remove(at: indexPath.row)
+            DataManager.deleteTask(allTasks: self!.toDoItems, taskToDelete: (self?.toDoItems.tasks[indexPath.row])!)
             tableView.deleteRows(at: [indexPath], with: .right)
             completionHandler(true)
         }
