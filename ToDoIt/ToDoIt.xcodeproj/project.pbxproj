@@ -10,6 +10,8 @@
 		B917415329B8E2FA00E052DC /* TaskTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B917415229B8E2FA00E052DC /* TaskTableViewCell.swift */; };
 		B9420C6929FA8B2C0039D38A /* EditTaskVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9420C6829FA8B2C0039D38A /* EditTaskVC.swift */; };
 		B9420C6B29FA8BAC0039D38A /* EditTaskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9420C6A29FA8BAC0039D38A /* EditTaskView.swift */; };
+		B9420C6D29FA99670039D38A /* CompletedTasksVCViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9420C6C29FA99670039D38A /* CompletedTasksVCViewController.swift */; };
+		B9420C6F29FA99740039D38A /* CompletedTasksView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9420C6E29FA99740039D38A /* CompletedTasksView.swift */; };
 		B94B64DE29BA004800456AB8 /* TagsBoxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B94B64DD29BA004800456AB8 /* TagsBoxView.swift */; };
 		B97F6F6029B8B403007D609E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B97F6F5F29B8B403007D609E /* AppDelegate.swift */; };
 		B97F6F6229B8B403007D609E /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B97F6F6129B8B403007D609E /* SceneDelegate.swift */; };
@@ -30,6 +32,8 @@
 		B917415229B8E2FA00E052DC /* TaskTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskTableViewCell.swift; sourceTree = "<group>"; };
 		B9420C6829FA8B2C0039D38A /* EditTaskVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditTaskVC.swift; sourceTree = "<group>"; };
 		B9420C6A29FA8BAC0039D38A /* EditTaskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditTaskView.swift; sourceTree = "<group>"; };
+		B9420C6C29FA99670039D38A /* CompletedTasksVCViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompletedTasksVCViewController.swift; sourceTree = "<group>"; };
+		B9420C6E29FA99740039D38A /* CompletedTasksView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompletedTasksView.swift; sourceTree = "<group>"; };
 		B94B64DD29BA004800456AB8 /* TagsBoxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagsBoxView.swift; sourceTree = "<group>"; };
 		B97F6F5C29B8B403007D609E /* ToDoIt.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ToDoIt.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B97F6F5F29B8B403007D609E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -107,6 +111,7 @@
 				B97F6F6329B8B403007D609E /* TaskListVC.swift */,
 				B97F6F7829B8B878007D609E /* NewTaskVC.swift */,
 				B9420C6829FA8B2C0039D38A /* EditTaskVC.swift */,
+				B9420C6C29FA99670039D38A /* CompletedTasksVCViewController.swift */,
 			);
 			path = VC;
 			sourceTree = "<group>";
@@ -120,6 +125,7 @@
 				B94B64DD29BA004800456AB8 /* TagsBoxView.swift */,
 				B9A99BC329DF0ADA00230F95 /* TagsTableViewCell.swift */,
 				B9420C6A29FA8BAC0039D38A /* EditTaskView.swift */,
+				B9420C6E29FA99740039D38A /* CompletedTasksView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -224,9 +230,11 @@
 				B97F6F7C29B8B88A007D609E /* NewTaskView.swift in Sources */,
 				B97F6F7929B8B878007D609E /* NewTaskVC.swift in Sources */,
 				B94B64DE29BA004800456AB8 /* TagsBoxView.swift in Sources */,
+				B9420C6F29FA99740039D38A /* CompletedTasksView.swift in Sources */,
 				B97F6F6029B8B403007D609E /* AppDelegate.swift in Sources */,
 				B9DCE56629DBA19900BA702C /* ToDoIt.xcdatamodeld in Sources */,
 				B9420C6B29FA8BAC0039D38A /* EditTaskView.swift in Sources */,
+				B9420C6D29FA99670039D38A /* CompletedTasksVCViewController.swift in Sources */,
 				B9DCE56C29DBA2CD00BA702C /* DataManager.swift in Sources */,
 				B9E3372729F2A6DF00D5D70D /* ToDoItem+CoreDataProperties.swift in Sources */,
 				B9E3372629F2A6DF00D5D70D /* ToDoItem+CoreDataClass.swift in Sources */,

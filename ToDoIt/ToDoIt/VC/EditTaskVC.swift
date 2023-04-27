@@ -25,14 +25,14 @@ class EditTaskVC: UIViewController {
     lazy var saveTaskButton: UIBarButtonItem = {
         let icon = UIImage(systemName: "square.and.arrow.down", withConfiguration: UIImage.SymbolConfiguration(textStyle: .title1))
         let button = UIBarButtonItem(image: icon, style: .plain, target: self, action: #selector(saveTaskButtonTapped))
-        button.tintColor = .black
+        button.tintColor = UIColor(named: "text")
         return button
     }()
     
     lazy var backButton: UIBarButtonItem = {
         let icon = UIImage(systemName: "arrowshape.backward", withConfiguration: UIImage.SymbolConfiguration(textStyle: .title2))
         let button = UIBarButtonItem(image: icon, style: .plain, target: self, action: #selector(backButtonTapped))
-        button.tintColor = .black
+        button.tintColor = UIColor(named: "text")
         return button
     }()
     

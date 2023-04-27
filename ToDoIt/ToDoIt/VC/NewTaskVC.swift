@@ -23,22 +23,22 @@ class NewTaskVC: UIViewController {
     var allTags: Tags
     var selectedTag: String
     
-    // MARK: UIBarButtonItems
-    
-    lazy var saveTaskButton: UIBarButtonItem = {
-        let icon = UIImage(systemName: "square.and.arrow.down", withConfiguration: UIImage.SymbolConfiguration(textStyle: .title1))
-        let button = UIBarButtonItem(image: icon, style: .plain, target: self, action: #selector(saveTaskButtonTapped))
-        button.tintColor = .black
-        button.isEnabled = false //disable button until user enters text
-        return button
-    }()
-    
-    lazy var backButton: UIBarButtonItem = {
-        let icon = UIImage(systemName: "arrowshape.backward", withConfiguration: UIImage.SymbolConfiguration(textStyle: .title2))
-        let button = UIBarButtonItem(image: icon, style: .plain, target: self, action: #selector(backButtonTapped))
-        button.tintColor = .black
-        return button
-    }()
+//    // MARK: UIBarButtonItems
+//    
+//    lazy var saveTaskButton: UIBarButtonItem = {
+//        let icon = UIImage(systemName: "square.and.arrow.down", withConfiguration: UIImage.SymbolConfiguration(textStyle: .title1))
+//        let button = UIBarButtonItem(image: icon, style: .plain, target: self, action: #selector(saveTaskButtonTapped))
+//        button.tintColor = UIColor(named: "text")
+//        button.isEnabled = false //disable button until user enters text
+//        return button
+//    }()
+//
+//    lazy var backButton: UIBarButtonItem = {
+//        let icon = UIImage(systemName: "arrowshape.backward", withConfiguration: UIImage.SymbolConfiguration(textStyle: .title2))
+//        let button = UIBarButtonItem(image: icon, style: .plain, target: self, action: #selector(backButtonTapped))
+//        button.tintColor = UIColor(named: "text")
+//        return button
+//    }()
         
     // MARK: - Initializer
     
@@ -62,9 +62,6 @@ class NewTaskVC: UIViewController {
         contentView = NewTaskView()
         view = contentView
         
-        navigationItem.leftBarButtonItem = backButton
-        navigationItem.rightBarButtonItem = saveTaskButton
-        
         setContentViewDelegates()
         
         contentView.tagsBoxView.tableView.register(TagsTableViewCell.self, forCellReuseIdentifier: TagsTableViewCell.tagsTableViewCellIdentifier)
@@ -73,21 +70,22 @@ class NewTaskVC: UIViewController {
     // MARK: - Functions
     
     private func setContentViewDelegates() {
+        contentView.saveTaskButtonTappedDelegate = self
         contentView.taskFieldView.delegate = self
         contentView.textFieldDoneButtonTappedDelegate = self
         contentView.tagsBoxView.presentNewTagViewDelegate = self
         contentView.tagsBoxView.tableView.delegate = self
         contentView.tagsBoxView.tableView.dataSource = self
     }
-    
-    @objc func saveTaskButtonTapped() {
+}
+
+// MARK: - NavigationButtonTappedDelegate
+
+extension NewTaskVC: SaveTaskButtonTappedDelegate {
+    func saveTask() {
         DataManager.saveTask(allTasks: toDoItems, task: contentView.taskFieldView.text!, tag: selectedTag)
         updateTaskListDelegate?.updateTaskList()
-        navigationController?.popViewController(animated: true)
-    }
-    
-    @objc func backButtonTapped() {
-        navigationController?.popViewController(animated: true)
+//        navigationController?.dismiss(animated: true)
     }
 }
 
@@ -122,9 +120,9 @@ extension NewTaskVC: PresentNewTagViewDelegate {
 extension NewTaskVC: UITextViewDelegate {
     func textViewDidChange(_ textView: UITextView) {
         if contentView.taskFieldView.text != "" {
-            saveTaskButton.isEnabled = true
+            contentView.saveTaskButton.isEnabled = true
         } else {
-            saveTaskButton.isEnabled = false
+            contentView.saveTaskButton.isEnabled = false
         }
     }
 }

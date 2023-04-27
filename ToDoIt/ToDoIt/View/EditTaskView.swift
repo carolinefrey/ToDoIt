@@ -20,6 +20,7 @@ class EditTaskView: UIView {
         viewTitle.translatesAutoresizingMaskIntoConstraints = false
         viewTitle.font = .boldSystemFont(ofSize: 38)
         viewTitle.text = "Edit Task"
+        viewTitle.textColor = UIColor(named: "text")
         viewTitle.textAlignment = .left
         return viewTitle
     }()

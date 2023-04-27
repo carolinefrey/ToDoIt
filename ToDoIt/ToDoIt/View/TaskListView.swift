@@ -15,10 +15,15 @@ protocol FilterTasksBySelectedTagDelegate: AnyObject {
     func filterTasksBySelectedTag(tag: String)
 }
 
+protocol PresentCompletedTasksViewDelegate: AnyObject {
+    func presentCompletedTasksView()
+}
+
 class TaskListView: UIView {
 
     var presentTaskViewDelegate: PresentNewTaskViewDelegate?
     var filterTasksBySelectedTagDelegate: FilterTasksBySelectedTagDelegate?
+    var presentCompletedTasksViewDelegate: PresentCompletedTasksViewDelegate?
     var toDoItems: [ToDoItem]
     var allTags: [String]
     var filterMenuItems = UIMenu()
@@ -29,6 +34,7 @@ class TaskListView: UIView {
         let todayTitle = UILabel()
         todayTitle.translatesAutoresizingMaskIntoConstraints = false
         todayTitle.font = .boldSystemFont(ofSize: 38)
+        todayTitle.textColor = UIColor(named: "text")
         todayTitle.text = "Today"
         todayTitle.textAlignment = .left
         return todayTitle
@@ -40,7 +46,7 @@ class TaskListView: UIView {
         button.setImage(icon, for: .normal)
         button.menu = filterMenuItems
         button.showsMenuAsPrimaryAction = true
-        button.tintColor = .black
+        button.tintColor = UIColor(named: "text")
         return button
     }()
     
@@ -49,7 +55,7 @@ class TaskListView: UIView {
         let button = UIButton()
         button.setImage(icon, for: .normal)
         button.addTarget(self, action: #selector(newTaskButtonTapped), for: .touchUpInside)
-        button.tintColor = .black
+        button.tintColor = UIColor(named: "text")
         return button
     }()
     
@@ -72,6 +78,15 @@ class TaskListView: UIView {
         tableView.separatorStyle = .none
         tableView.backgroundColor = UIColor(named: "background")
         return tableView
+    }()
+    
+    lazy var showCompletedTasksButton: UIButton = {
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.tintColor = UIColor(named: "text")
+        button.setImage(UIImage(systemName: "archivebox.fill", withConfiguration: UIImage.SymbolConfiguration(textStyle: .title1)), for: .normal)
+        button.addTarget(self, action: #selector(showCompletedTasksButtonTapped), for: .touchUpInside)
+        return button
     }()
     
     // MARK: - Initializers
@@ -108,6 +123,10 @@ class TaskListView: UIView {
     @objc func newTaskButtonTapped() {
         presentTaskViewDelegate?.presentNewTaskView()
     }
+    
+    @objc func showCompletedTasksButtonTapped() {
+        presentCompletedTasksViewDelegate?.presentCompletedTasksView()
+    }
 
     // MARK: - UI Setup
 
@@ -116,12 +135,16 @@ class TaskListView: UIView {
         navBarButtonStackView.addArrangedSubview(newTaskButton)
         
         addSubview(tableView)
+        addSubview(showCompletedTasksButton)
         
         NSLayoutConstraint.activate([
             tableView.topAnchor.constraint(equalTo: topAnchor),
             tableView.leadingAnchor.constraint(equalTo: leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            tableView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            tableView.heightAnchor.constraint(equalTo: heightAnchor, multiplier: 0.9),
+            
+            showCompletedTasksButton.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor),
+            showCompletedTasksButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
         ])
     }
 }

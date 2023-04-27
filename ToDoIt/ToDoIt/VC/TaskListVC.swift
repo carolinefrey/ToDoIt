@@ -39,6 +39,7 @@ class TaskListVC: UIViewController {
         
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: contentView.todayTitle)
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: contentView.navBarButtonStackView)
+        navigationController?.navigationBar.isTranslucent = true
         
         setContentViewDelegates()
         
@@ -57,6 +58,7 @@ class TaskListVC: UIViewController {
         contentView.filterTasksBySelectedTagDelegate = self
         contentView.tableView.dataSource = self
         contentView.tableView.delegate = self
+        contentView.presentCompletedTasksViewDelegate = self
     }
 }
 
@@ -66,7 +68,8 @@ extension TaskListVC: PresentNewTaskViewDelegate {
     func presentNewTaskView() {
         let newTaskVC = NewTaskVC(toDoItems: toDoItems, allTags: allTags)
         newTaskVC.updateTaskListDelegate = self
-        navigationController?.pushViewController(newTaskVC, animated: true)
+        navigationController?.present(newTaskVC, animated: true)
+//        navigationController?.pushViewController(newTaskVC, animated: true)
     }
 }
 
@@ -89,6 +92,15 @@ extension TaskListVC: FilterTasksBySelectedTagDelegate {
             contentView.filterButton.setImage(UIImage(systemName: "line.3.horizontal.decrease.circle.fill", withConfiguration: UIImage.SymbolConfiguration(textStyle: .title1)), for: .normal)
         }
         contentView.tableView.reloadData()
+    }
+}
+
+// MARK: - PresentCompletedTasksViewDelegate
+
+extension TaskListVC: PresentCompletedTasksViewDelegate {
+    func presentCompletedTasksView() {
+        let completedTasksVC = CompletedTasksVCViewController()
+        navigationController?.pushViewController(completedTasksVC, animated: true)
     }
 }
 
@@ -152,5 +164,6 @@ extension TaskListVC: UITableViewDelegate {
 extension TaskListVC: UpdateTaskListDelegate {
     func updateTaskList() {
         self.contentView.tableView.reloadData()
+        navigationController?.dismiss(animated: true)
     }
 }
