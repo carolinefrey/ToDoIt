@@ -22,23 +22,6 @@ class NewTaskVC: UIViewController {
     var toDoItems: Tasks
     var allTags: Tags
     var selectedTag: String
-    
-//    // MARK: UIBarButtonItems
-//    
-//    lazy var saveTaskButton: UIBarButtonItem = {
-//        let icon = UIImage(systemName: "square.and.arrow.down", withConfiguration: UIImage.SymbolConfiguration(textStyle: .title1))
-//        let button = UIBarButtonItem(image: icon, style: .plain, target: self, action: #selector(saveTaskButtonTapped))
-//        button.tintColor = UIColor(named: "text")
-//        button.isEnabled = false //disable button until user enters text
-//        return button
-//    }()
-//
-//    lazy var backButton: UIBarButtonItem = {
-//        let icon = UIImage(systemName: "arrowshape.backward", withConfiguration: UIImage.SymbolConfiguration(textStyle: .title2))
-//        let button = UIBarButtonItem(image: icon, style: .plain, target: self, action: #selector(backButtonTapped))
-//        button.tintColor = UIColor(named: "text")
-//        return button
-//    }()
         
     // MARK: - Initializer
     
@@ -85,7 +68,6 @@ extension NewTaskVC: SaveTaskButtonTappedDelegate {
     func saveTask() {
         DataManager.saveTask(allTasks: toDoItems, task: contentView.taskFieldView.text!, tag: selectedTag)
         updateTaskListDelegate?.updateTaskList()
-//        navigationController?.dismiss(animated: true)
     }
 }
 

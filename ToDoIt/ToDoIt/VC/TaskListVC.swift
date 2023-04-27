@@ -41,6 +41,12 @@ class TaskListVC: UIViewController {
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: contentView.navBarButtonStackView)
         navigationController?.navigationBar.isTranslucent = true
         
+        let standardAppearance = UINavigationBarAppearance()
+        standardAppearance.configureWithOpaqueBackground()
+        standardAppearance.backgroundColor = UIColor(named: "background")
+        
+        navigationController?.navigationBar.standardAppearance = standardAppearance
+        
         setContentViewDelegates()
         
         contentView.tableView.register(TaskTableViewCell.self, forCellReuseIdentifier: TaskTableViewCell.taskTableViewCellIdentifier)
@@ -69,7 +75,6 @@ extension TaskListVC: PresentNewTaskViewDelegate {
         let newTaskVC = NewTaskVC(toDoItems: toDoItems, allTags: allTags)
         newTaskVC.updateTaskListDelegate = self
         navigationController?.present(newTaskVC, animated: true)
-//        navigationController?.pushViewController(newTaskVC, animated: true)
     }
 }
 

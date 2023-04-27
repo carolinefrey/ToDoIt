@@ -43,13 +43,6 @@ class NewTaskView: UIView {
         return button
     }()
     
-//    lazy var backButton: UIBarButtonItem = {
-//        let icon = UIImage(systemName: "arrowshape.backward", withConfiguration: UIImage.SymbolConfiguration(textStyle: .title2))
-//        let button = UIBarButtonItem(image: icon, style: .plain, target: self, action: #selector(backButtonTapped))
-//        button.tintColor = UIColor(named: "text")
-//        return button
-//    }()
-    
     let taskFieldView: UITextView = {
         let field = UITextView()
         field.translatesAutoresizingMaskIntoConstraints = false
@@ -94,16 +87,7 @@ class NewTaskView: UIView {
     
     @objc func saveTaskButtonTapped() {
         saveTaskButtonTappedDelegate?.saveTask()
-        
-//        DataManager.saveTask(allTasks: toDoItems, task: contentView.taskFieldView.text!, tag: selectedTag)
-//        updateTaskListDelegate?.updateTaskList()
-//        navigationController?.popViewController(animated: true)
     }
-    
-//    @objc func backButtonTapped() {
-//
-//        navigationController?.popViewController(animated: true)
-//    }
     
     // MARK: - UI Setup
     
