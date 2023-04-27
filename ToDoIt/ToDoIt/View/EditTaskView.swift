@@ -29,6 +29,7 @@ class EditTaskView: UIView {
         field.translatesAutoresizingMaskIntoConstraints = false
         field.returnKeyType = .default
         field.font = .systemFont(ofSize: 16)
+        field.backgroundColor = UIColor(named: "background")
         return field
     }()
     
@@ -52,7 +53,7 @@ class EditTaskView: UIView {
     init(selectedToDoItem: ToDoItem) {
         self.selectedToDoItem = selectedToDoItem
         super.init(frame: .zero)
-        backgroundColor = .white
+        backgroundColor = UIColor(named: "background")
         configureViews()
     }
 

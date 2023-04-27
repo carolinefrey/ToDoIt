@@ -20,7 +20,7 @@ class TagsBoxView: UIView {
     let tagBoxView: UIView = {
         let box = UIView()
         box.translatesAutoresizingMaskIntoConstraints = false
-        box.backgroundColor = .lightGray
+        box.backgroundColor = UIColor(named: "tagsBoxBackground")
         box.layer.cornerRadius = 10
         return box
     }()
@@ -52,7 +52,7 @@ class TagsBoxView: UIView {
         tableView.layer.cornerRadius = 10
         tableView.rowHeight = 30
         tableView.separatorStyle = .none
-        tableView.backgroundColor = .lightGray
+        tableView.backgroundColor = UIColor(named: "tagsBoxBackground")
         return tableView
     }()
     

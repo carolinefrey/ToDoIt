@@ -31,6 +31,7 @@ class NewTaskView: UIView {
         field.translatesAutoresizingMaskIntoConstraints = false
         field.returnKeyType = .default
         field.font = .systemFont(ofSize: 16)
+        field.backgroundColor = UIColor(named: "background")
         return field
     }()
     
@@ -53,7 +54,7 @@ class NewTaskView: UIView {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        backgroundColor = .white
+        backgroundColor = UIColor(named: "background")
         configureViews()
     }
     required init?(coder: NSCoder) {

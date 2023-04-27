@@ -18,7 +18,7 @@ class TagsTableViewCell: UITableViewCell {
         tag.translatesAutoresizingMaskIntoConstraints = false
         tag.font = .systemFont(ofSize: 18)
         tag.textColor = .black
-        tag.backgroundColor = .lightGray
+        tag.backgroundColor = UIColor(named: "tagsBoxBackground")
         return tag
     }()
     

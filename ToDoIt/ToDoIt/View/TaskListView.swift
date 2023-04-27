@@ -70,6 +70,7 @@ class TaskListView: UIView {
         tableView.layer.cornerRadius = 30
         tableView.rowHeight = 60
         tableView.separatorStyle = .none
+        tableView.backgroundColor = UIColor(named: "background")
         return tableView
     }()
     
@@ -81,7 +82,8 @@ class TaskListView: UIView {
         
         super.init(frame: .zero)
 
-        backgroundColor = .white
+        backgroundColor = UIColor(named: "background")
+        
         configureFilterMenu()
         configureViews()
     }

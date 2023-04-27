@@ -26,7 +26,6 @@ class EditTaskVC: UIViewController {
         let icon = UIImage(systemName: "square.and.arrow.down", withConfiguration: UIImage.SymbolConfiguration(textStyle: .title1))
         let button = UIBarButtonItem(image: icon, style: .plain, target: self, action: #selector(saveTaskButtonTapped))
         button.tintColor = .black
-        button.isEnabled = false //disable button until user enters text
         return button
     }()
     
@@ -71,7 +70,6 @@ class EditTaskVC: UIViewController {
     // MARK: - Functions
     
     private func setContentViewDelegates() {
-        contentView.taskFieldView.delegate = self
         contentView.textFieldDoneButtonTappedDelegate = self
         contentView.tagsBoxView.presentNewTagViewDelegate = self
         contentView.tagsBoxView.tableView.delegate = self
@@ -112,18 +110,6 @@ extension EditTaskVC: PresentNewTagViewDelegate {
         addTagAlert.addAction(cancel)
         
         self.present(addTagAlert, animated: true)
-    }
-}
-
-// MARK: - UITextFieldDelegate
-
-extension EditTaskVC: UITextViewDelegate {
-    func textViewDidChange(_ textView: UITextView) {
-        if contentView.taskFieldView.text == "" || contentView.taskFieldView.text == selectedToDoItem.task {
-            saveTaskButton.isEnabled = false
-        } else {
-            saveTaskButton.isEnabled = true
-        }
     }
 }
 

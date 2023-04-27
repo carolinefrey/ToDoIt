@@ -111,6 +111,11 @@ extension TaskListVC: UITableViewDataSource {
         } else {
             cell.configureTask(task: toDoItems.tasks[indexPath.row])
         }
+        
+        cell.backgroundColor = UIColor(named: "background")
+        let selectedBackgroundView = UIView(frame: .zero)
+        selectedBackgroundView.backgroundColor = UIColor(named: "background")
+        cell.selectedBackgroundView = selectedBackgroundView
         return cell
     }
 }

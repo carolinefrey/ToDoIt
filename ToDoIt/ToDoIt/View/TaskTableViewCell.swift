@@ -18,6 +18,7 @@ class TaskTableViewCell: UITableViewCell {
         field.translatesAutoresizingMaskIntoConstraints = false
         field.returnKeyType = .default
         field.font = .systemFont(ofSize: 16)
+        field.backgroundColor = UIColor(named: "background")
         return field
     }()
     
@@ -25,7 +26,8 @@ class TaskTableViewCell: UITableViewCell {
         let tag = UILabel()
         tag.translatesAutoresizingMaskIntoConstraints = false
         tag.font = .systemFont(ofSize: 12)
-        tag.textColor = .gray
+        tag.textColor = .black
+        tag.backgroundColor = UIColor(named: "background")
         return tag
     }()
 
