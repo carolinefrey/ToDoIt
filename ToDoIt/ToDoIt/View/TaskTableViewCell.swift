@@ -13,8 +13,8 @@ class TaskTableViewCell: UITableViewCell {
         
     // MARK: - UI Properties
 
-    let taskFieldView: UITextField = {
-        let field = UITextField()
+    let taskFieldView: UITextView = {
+        let field = UITextView()
         field.translatesAutoresizingMaskIntoConstraints = false
         field.returnKeyType = .default
         field.font = .systemFont(ofSize: 16)

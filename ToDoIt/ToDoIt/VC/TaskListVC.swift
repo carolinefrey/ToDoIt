@@ -46,6 +46,7 @@ class TaskListVC: UIViewController {
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        contentView.configureFilterMenu()
         contentView.tableView.reloadData()
     }
     
@@ -117,15 +118,10 @@ extension TaskListVC: UITableViewDataSource {
 // MARK: - UITableViewDelegate
 
 extension TaskListVC: UITableViewDelegate {
-//    func tableView(_ tableView: UITableView, canFocusRowAt indexPath: IndexPath) -> Bool {
-//        return true
-//    }
-//    func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-//        return true
-//    }
+
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        // TODO: - Implement task editing directly in cell
-        tableView.deselectRow(at: indexPath, animated: true)
+        let editTaskVC = EditTaskVC(selectedToDoItem: toDoItems.tasks[indexPath.row], toDoItems: toDoItems, allTags: allTags)
+        navigationController?.pushViewController(editTaskVC, animated: true)
     }
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
@@ -150,7 +146,6 @@ extension TaskListVC: UITableViewDelegate {
 
 extension TaskListVC: UpdateTaskListDelegate {
     func updateTaskList() {
-//        fetchToDoItems()
         self.contentView.tableView.reloadData()
     }
 }

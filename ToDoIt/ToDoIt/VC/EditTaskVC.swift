@@ -1,26 +1,23 @@
 //
-//  NewTaskVC.swift
+//  EditTaskVC.swift
 //  ToDoIt
 //
-//  Created by Caroline Frey on 3/8/23.
+//  Created by Caroline Frey on 4/27/23.
 //
 
 import UIKit
 
-protocol UpdateTaskListDelegate: AnyObject {
-    func updateTaskList()
-}
-
-class NewTaskVC: UIViewController {
+class EditTaskVC: UIViewController {
     
     // MARK: - Properties
     
-    private var contentView: NewTaskView!
+    private var contentView: EditTaskView!
     
     var updateTaskListDelegate: UpdateTaskListDelegate?
     
     var toDoItems: Tasks
     var allTags: Tags
+    var selectedToDoItem: ToDoItem
     var selectedTag: String
     
     // MARK: UIBarButtonItems
@@ -39,12 +36,13 @@ class NewTaskVC: UIViewController {
         button.tintColor = .black
         return button
     }()
-        
+    
     // MARK: - Initializer
     
-    init(toDoItems: Tasks, allTags: Tags) {
+    init(selectedToDoItem: ToDoItem, toDoItems: Tasks, allTags: Tags) {
         self.toDoItems = toDoItems
         self.allTags = allTags
+        self.selectedToDoItem = selectedToDoItem
         self.selectedTag = ""
         
         super.init(nibName: nil, bundle: nil)
@@ -55,11 +53,11 @@ class NewTaskVC: UIViewController {
     }
     
     // MARK: - Lifecycle
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-    
-        contentView = NewTaskView()
+        
+        contentView = EditTaskView(selectedToDoItem: selectedToDoItem)
         view = contentView
         
         navigationItem.leftBarButtonItem = backButton
@@ -81,7 +79,7 @@ class NewTaskVC: UIViewController {
     }
     
     @objc func saveTaskButtonTapped() {
-        DataManager.saveTask(allTasks: toDoItems, task: contentView.taskFieldView.text!, tag: selectedTag)
+        DataManager.updateTask(toDoItem: selectedToDoItem, task: contentView.taskFieldView.text!, tag: selectedTag)
         updateTaskListDelegate?.updateTaskList()
         navigationController?.popViewController(animated: true)
     }
@@ -93,7 +91,7 @@ class NewTaskVC: UIViewController {
 
 // MARK: - PresentNewTagViewDelegate
 
-extension NewTaskVC: PresentNewTagViewDelegate {
+extension EditTaskVC: PresentNewTagViewDelegate {
     func presentNewTagView() {
         let addTagAlert = UIAlertController(title: "Add new tag", message: nil, preferredStyle: .alert)
         addTagAlert.addTextField()
@@ -119,19 +117,19 @@ extension NewTaskVC: PresentNewTagViewDelegate {
 
 // MARK: - UITextFieldDelegate
 
-extension NewTaskVC: UITextViewDelegate {
+extension EditTaskVC: UITextViewDelegate {
     func textViewDidChange(_ textView: UITextView) {
-        if contentView.taskFieldView.text != "" {
-            saveTaskButton.isEnabled = true
-        } else {
+        if contentView.taskFieldView.text == "" || contentView.taskFieldView.text == selectedToDoItem.task {
             saveTaskButton.isEnabled = false
+        } else {
+            saveTaskButton.isEnabled = true
         }
     }
 }
 
 // MARK: - NotesFieldAddJobViewDelegate
 
-extension NewTaskVC: TextFieldDoneButtonTappedDelegate {
+extension EditTaskVC: TextFieldDoneButtonTappedDelegate {
     func textFieldDoneButtonTapped() {
         self.view.endEditing(true)
     }
@@ -139,7 +137,7 @@ extension NewTaskVC: TextFieldDoneButtonTappedDelegate {
 
 // MARK: - UITableViewDataSource (Tags box)
 
-extension NewTaskVC: UITableViewDataSource {
+extension EditTaskVC: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         allTags.tags.count
     }
@@ -147,13 +145,19 @@ extension NewTaskVC: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = contentView.tagsBoxView.tableView.dequeueReusableCell(withIdentifier: TagsTableViewCell.tagsTableViewCellIdentifier) as! TagsTableViewCell
         cell.configureTag(tag: allTags.tags[indexPath.row])
+        
+        if allTags.tags[indexPath.row] == selectedToDoItem.tag {
+            cell.accessoryType = .checkmark
+            cell.tintColor = .black
+        }
+        
         return cell
     }
 }
 
 // MARK: - UITableViewDelegate (Tags box)
 
-extension NewTaskVC: UITableViewDelegate {
+extension EditTaskVC: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if let cell = contentView.tagsBoxView.tableView.cellForRow(at: indexPath) as? TagsTableViewCell {
             cell.accessoryType = .checkmark

@@ -1,19 +1,17 @@
 //
-//  NewTaskView.swift
+//  EditTaskView.swift
 //  ToDoIt
 //
-//  Created by Caroline Frey on 3/8/23.
+//  Created by Caroline Frey on 4/27/23.
 //
 
 import UIKit
 
-protocol TextFieldDoneButtonTappedDelegate: AnyObject {
-    func textFieldDoneButtonTapped()
-}
+class EditTaskView: UIView {
 
-class NewTaskView: UIView {
-    
     weak var textFieldDoneButtonTappedDelegate: TextFieldDoneButtonTappedDelegate?
+    
+    var selectedToDoItem: ToDoItem
 
     // MARK: - UI Properties
         
@@ -21,7 +19,7 @@ class NewTaskView: UIView {
         let viewTitle = UILabel()
         viewTitle.translatesAutoresizingMaskIntoConstraints = false
         viewTitle.font = .boldSystemFont(ofSize: 38)
-        viewTitle.text = "New Task"
+        viewTitle.text = "Edit Task"
         viewTitle.textAlignment = .left
         return viewTitle
     }()
@@ -51,11 +49,13 @@ class NewTaskView: UIView {
 
     // MARK: - Initializers
     
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    init(selectedToDoItem: ToDoItem) {
+        self.selectedToDoItem = selectedToDoItem
+        super.init(frame: .zero)
         backgroundColor = .white
         configureViews()
     }
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -68,12 +68,13 @@ class NewTaskView: UIView {
     
     // MARK: - UI Setup
     
-    private func configureViews() {        
+    private func configureViews() {
         addSubview(viewTitleLabel)
         addSubview(taskFieldView)
         addSubview(tagsBoxView)
         
         taskFieldView.inputAccessoryView = keyboardToolbar
+        taskFieldView.text = "\(selectedToDoItem.task ?? "")"
         
         NSLayoutConstraint.activate([
             viewTitleLabel.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
@@ -90,4 +91,5 @@ class NewTaskView: UIView {
             tagsBoxView.widthAnchor.constraint(equalTo: widthAnchor, multiplier: 0.90),
         ])
     }
+
 }
