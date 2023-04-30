@@ -20,29 +20,13 @@ class EditTaskVC: UIViewController {
     var selectedToDoItem: ToDoItem
     var selectedTag: String
     
-    // MARK: UIBarButtonItems
-    
-    //    lazy var saveTaskButton: UIBarButtonItem = {
-    //        let icon = UIImage(systemName: "square.and.arrow.down", withConfiguration: UIImage.SymbolConfiguration(textStyle: .title1))
-    //        let button = UIBarButtonItem(image: icon, style: .plain, target: self, action: #selector(saveTaskButtonTapped))
-    //        button.tintColor = UIColor(named: "text")
-    //        return button
-    //    }()
-    //
-    //    lazy var backButton: UIBarButtonItem = {
-    //        let icon = UIImage(systemName: "arrowshape.backward", withConfiguration: UIImage.SymbolConfiguration(textStyle: .title2))
-    //        let button = UIBarButtonItem(image: icon, style: .plain, target: self, action: #selector(backButtonTapped))
-    //        button.tintColor = UIColor(named: "text")
-    //        return button
-    //    }()
-    
     // MARK: - Initializer
     
     init(selectedToDoItem: ToDoItem, toDoItems: Tasks, allTags: Tags) {
         self.toDoItems = toDoItems
         self.allTags = allTags
         self.selectedToDoItem = selectedToDoItem
-        self.selectedTag = ""
+        self.selectedTag = selectedToDoItem.tag ?? ""
         
         super.init(nibName: nil, bundle: nil)
     }
@@ -58,10 +42,7 @@ class EditTaskVC: UIViewController {
         
         contentView = EditTaskView(selectedToDoItem: selectedToDoItem)
         view = contentView
-        
-        //        navigationItem.leftBarButtonItem = backButton
-        //        navigationItem.rightBarButtonItem = saveTaskButton
-        
+                
         setContentViewDelegates()
         
         contentView.tagsBoxView.tableView.register(TagsTableViewCell.self, forCellReuseIdentifier: TagsTableViewCell.tagsTableViewCellIdentifier)
@@ -76,16 +57,6 @@ class EditTaskVC: UIViewController {
         contentView.tagsBoxView.tableView.delegate = self
         contentView.tagsBoxView.tableView.dataSource = self
     }
-    
-//    @objc func saveTaskButtonTapped() {
-//        DataManager.updateTask(toDoItem: selectedToDoItem, task: contentView.taskFieldView.text!, tag: selectedTag)
-//        updateTaskListDelegate?.updateTaskList()
-//        navigationController?.popViewController(animated: true)
-//    }
-//
-//    @objc func backButtonTapped() {
-//        navigationController?.popViewController(animated: true)
-//    }
 }
 
 // MARK: - SaveTaskButtonTappedDelegate

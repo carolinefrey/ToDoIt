@@ -7,10 +7,6 @@
 
 import UIKit
 
-//protocol SaveTaskButtonTappedDelegate: AnyObject {
-//    func saveTask()
-//}
-
 class EditTaskView: UIView {
 
     weak var textFieldDoneButtonTappedDelegate: TextFieldDoneButtonTappedDelegate?
