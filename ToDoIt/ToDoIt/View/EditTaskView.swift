@@ -7,9 +7,14 @@
 
 import UIKit
 
+//protocol SaveTaskButtonTappedDelegate: AnyObject {
+//    func saveTask()
+//}
+
 class EditTaskView: UIView {
 
     weak var textFieldDoneButtonTappedDelegate: TextFieldDoneButtonTappedDelegate?
+    weak var saveTaskButtonTappedDelegate: SaveTaskButtonTappedDelegate?
     
     var selectedToDoItem: ToDoItem
 
@@ -23,6 +28,16 @@ class EditTaskView: UIView {
         viewTitle.textColor = UIColor(named: "text")
         viewTitle.textAlignment = .left
         return viewTitle
+    }()
+    
+    lazy var saveTaskButton: UIButton = {
+        let icon = UIImage(systemName: "square.and.arrow.down", withConfiguration: UIImage.SymbolConfiguration(textStyle: .title1))
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setImage(icon, for: .normal)
+        button.addTarget(self, action: #selector(saveTaskButtonTapped), for: .touchUpInside)
+        button.tintColor = UIColor(named: "text")
+        return button
     }()
     
     let taskFieldView: UITextView = {
@@ -68,10 +83,15 @@ class EditTaskView: UIView {
         textFieldDoneButtonTappedDelegate?.textFieldDoneButtonTapped()
     }
     
+    @objc func saveTaskButtonTapped() {
+        saveTaskButtonTappedDelegate?.saveTask()
+    }
+    
     // MARK: - UI Setup
     
     private func configureViews() {
         addSubview(viewTitleLabel)
+        addSubview(saveTaskButton)
         addSubview(taskFieldView)
         addSubview(tagsBoxView)
         
@@ -79,8 +99,11 @@ class EditTaskView: UIView {
         taskFieldView.text = "\(selectedToDoItem.task ?? "")"
         
         NSLayoutConstraint.activate([
-            viewTitleLabel.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
+            viewTitleLabel.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 20),
             viewTitleLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
+            
+            saveTaskButton.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 20),
+            saveTaskButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
             
             taskFieldView.topAnchor.constraint(equalTo: viewTitleLabel.bottomAnchor, constant: 20),
             taskFieldView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),

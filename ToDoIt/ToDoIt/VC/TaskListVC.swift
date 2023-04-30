@@ -143,7 +143,8 @@ extension TaskListVC: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let editTaskVC = EditTaskVC(selectedToDoItem: toDoItems.tasks[indexPath.row], toDoItems: toDoItems, allTags: allTags)
-        navigationController?.pushViewController(editTaskVC, animated: true)
+        editTaskVC.updateTaskListDelegate = self
+        navigationController?.present(editTaskVC, animated: true)
     }
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {

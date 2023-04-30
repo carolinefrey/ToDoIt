@@ -22,19 +22,19 @@ class EditTaskVC: UIViewController {
     
     // MARK: UIBarButtonItems
     
-    lazy var saveTaskButton: UIBarButtonItem = {
-        let icon = UIImage(systemName: "square.and.arrow.down", withConfiguration: UIImage.SymbolConfiguration(textStyle: .title1))
-        let button = UIBarButtonItem(image: icon, style: .plain, target: self, action: #selector(saveTaskButtonTapped))
-        button.tintColor = UIColor(named: "text")
-        return button
-    }()
-    
-    lazy var backButton: UIBarButtonItem = {
-        let icon = UIImage(systemName: "arrowshape.backward", withConfiguration: UIImage.SymbolConfiguration(textStyle: .title2))
-        let button = UIBarButtonItem(image: icon, style: .plain, target: self, action: #selector(backButtonTapped))
-        button.tintColor = UIColor(named: "text")
-        return button
-    }()
+    //    lazy var saveTaskButton: UIBarButtonItem = {
+    //        let icon = UIImage(systemName: "square.and.arrow.down", withConfiguration: UIImage.SymbolConfiguration(textStyle: .title1))
+    //        let button = UIBarButtonItem(image: icon, style: .plain, target: self, action: #selector(saveTaskButtonTapped))
+    //        button.tintColor = UIColor(named: "text")
+    //        return button
+    //    }()
+    //
+    //    lazy var backButton: UIBarButtonItem = {
+    //        let icon = UIImage(systemName: "arrowshape.backward", withConfiguration: UIImage.SymbolConfiguration(textStyle: .title2))
+    //        let button = UIBarButtonItem(image: icon, style: .plain, target: self, action: #selector(backButtonTapped))
+    //        button.tintColor = UIColor(named: "text")
+    //        return button
+    //    }()
     
     // MARK: - Initializer
     
@@ -59,8 +59,8 @@ class EditTaskVC: UIViewController {
         contentView = EditTaskView(selectedToDoItem: selectedToDoItem)
         view = contentView
         
-        navigationItem.leftBarButtonItem = backButton
-        navigationItem.rightBarButtonItem = saveTaskButton
+        //        navigationItem.leftBarButtonItem = backButton
+        //        navigationItem.rightBarButtonItem = saveTaskButton
         
         setContentViewDelegates()
         
@@ -70,20 +70,30 @@ class EditTaskVC: UIViewController {
     // MARK: - Functions
     
     private func setContentViewDelegates() {
+        contentView.saveTaskButtonTappedDelegate = self
         contentView.textFieldDoneButtonTappedDelegate = self
         contentView.tagsBoxView.presentNewTagViewDelegate = self
         contentView.tagsBoxView.tableView.delegate = self
         contentView.tagsBoxView.tableView.dataSource = self
     }
     
-    @objc func saveTaskButtonTapped() {
+//    @objc func saveTaskButtonTapped() {
+//        DataManager.updateTask(toDoItem: selectedToDoItem, task: contentView.taskFieldView.text!, tag: selectedTag)
+//        updateTaskListDelegate?.updateTaskList()
+//        navigationController?.popViewController(animated: true)
+//    }
+//
+//    @objc func backButtonTapped() {
+//        navigationController?.popViewController(animated: true)
+//    }
+}
+
+// MARK: - SaveTaskButtonTappedDelegate
+
+extension EditTaskVC: SaveTaskButtonTappedDelegate {
+    func saveTask() {
         DataManager.updateTask(toDoItem: selectedToDoItem, task: contentView.taskFieldView.text!, tag: selectedTag)
         updateTaskListDelegate?.updateTaskList()
-        navigationController?.popViewController(animated: true)
-    }
-    
-    @objc func backButtonTapped() {
-        navigationController?.popViewController(animated: true)
     }
 }
 
