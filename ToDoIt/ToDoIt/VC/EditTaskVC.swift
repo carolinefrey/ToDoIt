@@ -19,6 +19,7 @@ class EditTaskVC: UIViewController {
     var allTags: Tags
     var selectedToDoItem: ToDoItem
     var selectedTag: String
+    var selectedTagIndex: IndexPath?
     
     // MARK: - Initializer
     
@@ -112,12 +113,15 @@ extension EditTaskVC: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = contentView.tagsBoxView.tableView.dequeueReusableCell(withIdentifier: TagsTableViewCell.tagsTableViewCellIdentifier) as! TagsTableViewCell
         cell.configureTag(tag: allTags.tags[indexPath.row])
+        cell.tintColor = .black
         
         if allTags.tags[indexPath.row] == selectedToDoItem.tag {
             cell.accessoryType = .checkmark
             cell.tintColor = .black
+        } else {
+            cell.accessoryType = .none
         }
-        
+
         return cell
     }
 }
@@ -126,18 +130,18 @@ extension EditTaskVC: UITableViewDataSource {
 
 extension EditTaskVC: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if let cell = contentView.tagsBoxView.tableView.cellForRow(at: indexPath) as? TagsTableViewCell {
-            cell.accessoryType = .checkmark
-            cell.tintColor = .black
+        tableView.cellForRow(at: indexPath)?.tintColor = .black
+        
+        if allTags.tags[indexPath.row] == selectedToDoItem.tag {
+            selectedToDoItem.tag = nil
+            selectedTag = ""
+        } else {
+            selectedToDoItem.tag = allTags.tags[indexPath.row]
+            selectedTag = allTags.tags[indexPath.row]
+
         }
-        selectedTag = allTags.tags[indexPath.row]
-    }
-    
-    func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
-        if let cell = contentView.tagsBoxView.tableView.cellForRow(at: indexPath) as? TagsTableViewCell {
-            cell.accessoryType = .none
-        }
-        selectedTag = ""
+        tableView.reloadData()
+
     }
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
