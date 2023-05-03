@@ -34,7 +34,7 @@ class TaskListVC: UIViewController {
     override func loadView() {
         super.loadView()
                     
-        contentView = TaskListView(toDoItems: toDoItems.tasks, allTags: allTags.tags)
+        contentView = TaskListView(toDoItems: toDoItems.tasks, allTags: allTags)
         view = contentView
         
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: contentView.todayTitle)
@@ -52,8 +52,7 @@ class TaskListVC: UIViewController {
         contentView.tableView.register(TaskTableViewCell.self, forCellReuseIdentifier: TaskTableViewCell.taskTableViewCellIdentifier)
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        contentView.configureFilterMenu()
+    override func viewDidAppear(_ animated: Bool) {
         contentView.tableView.reloadData()
     }
     
@@ -83,7 +82,8 @@ extension TaskListVC: PresentNewTaskViewDelegate {
 extension TaskListVC: FilterTasksBySelectedTagDelegate {
     func filterTasksBySelectedTag(tag: String) {
         //if user taps selected tag again, show all to do items and reset menu
-        if selectedFilter == tag {
+        if tag == "All" {
+            selectedFilter = ""
             filteredToDoItems = []
             contentView.filterButton.setImage(UIImage(systemName: "line.3.horizontal.decrease.circle", withConfiguration: UIImage.SymbolConfiguration(textStyle: .title1)), for: .normal)
         } else {
@@ -171,5 +171,9 @@ extension TaskListVC: UpdateTaskListDelegate {
     func updateTaskList() {
         self.contentView.tableView.reloadData()
         navigationController?.dismiss(animated: true)
+    }
+    
+    func updateFilterMenuList(allTags: Tags) {
+        self.contentView.configureFilterMenu(allTags: allTags)
     }
 }

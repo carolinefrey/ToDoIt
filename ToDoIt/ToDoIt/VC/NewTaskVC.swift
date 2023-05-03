@@ -9,6 +9,7 @@ import UIKit
 
 protocol UpdateTaskListDelegate: AnyObject {
     func updateTaskList()
+    func updateFilterMenuList(allTags: Tags)
 }
 
 class NewTaskVC: UIViewController {
@@ -83,6 +84,7 @@ extension NewTaskVC: PresentNewTagViewDelegate {
             if let newTag = tag.text {
                 if !self.allTags.tags.contains(newTag) {
                     self.allTags.tags.append(newTag)
+                    self.updateTaskListDelegate?.updateFilterMenuList(allTags: self.allTags)
                 }
             }
             self.contentView.tagsBoxView.tableView.reloadData()
