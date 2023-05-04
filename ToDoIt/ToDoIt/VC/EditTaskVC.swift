@@ -49,6 +49,10 @@ class EditTaskVC: UIViewController {
         contentView.tagsBoxView.tableView.register(TagsTableViewCell.self, forCellReuseIdentifier: TagsTableViewCell.tagsTableViewCellIdentifier)
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        updateTaskListDelegate?.updateFilterMenu()
+    }
+    
     // MARK: - Functions
     
     private func setContentViewDelegates() {

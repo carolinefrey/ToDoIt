@@ -56,6 +56,15 @@ class TaskListVC: UIViewController {
         contentView.tableView.reloadData()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(true)
+        
+        print("TaskListVC will appear")
+        print("DEBUG: allTags, TaskListVC = \(allTags.tags)")
+        
+        contentView.configureFilterMenu()
+    }
+    
     // MARK: - Functions
     
     private func setContentViewDelegates() {
@@ -173,7 +182,7 @@ extension TaskListVC: UpdateTaskListDelegate {
         navigationController?.dismiss(animated: true)
     }
     
-    func updateFilterMenuList(allTags: Tags) {
-        self.contentView.configureFilterMenu(allTags: allTags)
+    func updateFilterMenu() {
+        contentView.configureFilterMenu()
     }
 }

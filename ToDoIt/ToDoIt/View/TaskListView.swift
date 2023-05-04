@@ -26,7 +26,7 @@ class TaskListView: UIView {
     var presentCompletedTasksViewDelegate: PresentCompletedTasksViewDelegate?
     var toDoItems: [ToDoItem]
     var allTags: Tags
-    var filterMenuItems = UIMenu()
+    var filterMenu = UIMenu()
     
     // MARK: - UI Properties
     
@@ -44,7 +44,7 @@ class TaskListView: UIView {
         let icon = UIImage(systemName: "line.3.horizontal.decrease.circle", withConfiguration: UIImage.SymbolConfiguration(textStyle: .title1))
         let button = UIButton()
         button.setImage(icon, for: .normal)
-        button.menu = filterMenuItems
+//        button.menu = filterMenu
         button.showsMenuAsPrimaryAction = true
         button.tintColor = UIColor(named: "text")
         return button
@@ -99,7 +99,7 @@ class TaskListView: UIView {
 
         backgroundColor = UIColor(named: "background")
         
-        configureFilterMenu(allTags: allTags)
+        configureFilterMenu()
         configureViews()
     }
     
@@ -109,7 +109,7 @@ class TaskListView: UIView {
     
     // MARK: - Functions
     
-    func configureFilterMenu(allTags: Tags) {
+    func configureFilterMenu() {
         var filterOptions: [UIAction] = []
         
         filterOptions.append(UIAction(title: "All", state: .on, handler: { [weak self] selectedTag in
@@ -121,19 +121,9 @@ class TaskListView: UIView {
                 self?.filterTasksBySelectedTagDelegate?.filterTasksBySelectedTag(tag: selectedTag.title)
             }))
         }
-        filterMenuItems = UIMenu(title: "Filter by tag", options: [.displayInline, .singleSelection], children: filterOptions)
+        filterMenu = UIMenu(title: "Filter by tag", options: [.displayInline, .singleSelection], children: filterOptions)
+        filterButton.menu = filterMenu
     }
-    
-//    func updateFilterMenu(allTags: Tags) {
-//        var newFilterOptions: [UIAction] = []
-//        
-//        for tag in allTags.tags {
-//            newFilterOptions.append(UIAction(title: "\(tag)", handler: { [weak self] selectedTag in
-//                self?.filterTasksBySelectedTagDelegate?.filterTasksBySelectedTag(tag: selectedTag.title)
-//            }))
-//        }
-//        filterMenuItems.replacingChildren(newFilterOptions)
-//    }
     
     @objc func newTaskButtonTapped() {
         presentTaskViewDelegate?.presentNewTaskView()

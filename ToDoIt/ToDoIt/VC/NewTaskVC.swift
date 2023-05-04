@@ -9,7 +9,7 @@ import UIKit
 
 protocol UpdateTaskListDelegate: AnyObject {
     func updateTaskList()
-    func updateFilterMenuList(allTags: Tags)
+    func updateFilterMenu()
 }
 
 class NewTaskVC: UIViewController {
@@ -51,6 +51,10 @@ class NewTaskVC: UIViewController {
         contentView.tagsBoxView.tableView.register(TagsTableViewCell.self, forCellReuseIdentifier: TagsTableViewCell.tagsTableViewCellIdentifier)
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        updateTaskListDelegate?.updateFilterMenu()
+    }
+    
     // MARK: - Functions
     
     private func setContentViewDelegates() {
@@ -84,7 +88,6 @@ extension NewTaskVC: PresentNewTagViewDelegate {
             if let newTag = tag.text {
                 if !self.allTags.tags.contains(newTag) {
                     self.allTags.tags.append(newTag)
-                    self.updateTaskListDelegate?.updateFilterMenuList(allTags: self.allTags)
                 }
             }
             self.contentView.tagsBoxView.tableView.reloadData()
@@ -160,6 +163,9 @@ extension NewTaskVC: UITableViewDelegate {
                 }
             }
             allTags.tags.remove(at: indexPath.row)
+            
+            print("DEBUG: allTags, NewTaskVC = \(allTags.tags)")
+            
             tableView.deleteRows(at: [indexPath], with: .fade)
         }
     }
