@@ -17,6 +17,8 @@ class TaskListVC: UIViewController {
     var allTags: Tags
     var filteredToDoItems: [ToDoItem] = []
     var selectedFilter: String = ""
+    var selectedTasks: [ToDoItem] = []
+    var editMode: Bool = false
     
     // MARK: - Initializer
     
@@ -72,7 +74,6 @@ class TaskListVC: UIViewController {
         contentView.filterTasksBySelectedTagDelegate = self
         contentView.tableView.dataSource = self
         contentView.tableView.delegate = self
-        contentView.presentCompletedTasksViewDelegate = self
     }
 }
 
@@ -90,7 +91,6 @@ extension TaskListVC: PresentNewTaskViewDelegate {
 
 extension TaskListVC: FilterTasksBySelectedTagDelegate {
     func filterTasksBySelectedTag(tag: String) {
-        //if user taps selected tag again, show all to do items and reset menu
         if tag == "All" {
             selectedFilter = ""
             filteredToDoItems = []
@@ -106,15 +106,6 @@ extension TaskListVC: FilterTasksBySelectedTagDelegate {
             contentView.filterButton.setImage(UIImage(systemName: "line.3.horizontal.decrease.circle.fill", withConfiguration: UIImage.SymbolConfiguration(textStyle: .title1)), for: .normal)
         }
         contentView.tableView.reloadData()
-    }
-}
-
-// MARK: - PresentCompletedTasksViewDelegate
-
-extension TaskListVC: PresentCompletedTasksViewDelegate {
-    func presentCompletedTasksView() {
-        let completedTasksVC = CompletedTasksVCViewController()
-        navigationController?.pushViewController(completedTasksVC, animated: true)
     }
 }
 
@@ -151,9 +142,15 @@ extension TaskListVC: UITableViewDataSource {
 extension TaskListVC: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let editTaskVC = EditTaskVC(selectedToDoItem: toDoItems.tasks[indexPath.row], toDoItems: toDoItems, allTags: allTags)
-        editTaskVC.updateTaskListDelegate = self
-        navigationController?.present(editTaskVC, animated: true)
+        if editMode {
+            // TODO: - Implement some sort of indication that task has been selected
+            selectedTasks.append(toDoItems.tasks[indexPath.row])
+            print("selected task \(toDoItems.tasks[indexPath.row])")
+        } else {
+            let editTaskVC = EditTaskVC(selectedToDoItem: toDoItems.tasks[indexPath.row], toDoItems: toDoItems, allTags: allTags)
+            editTaskVC.updateTaskListDelegate = self
+            navigationController?.present(editTaskVC, animated: true)
+        }
     }
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
@@ -164,13 +161,22 @@ extension TaskListVC: UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        let action = UIContextualAction(style: .normal, title: "Done") { [weak self] (action, view, completionHandler) in
+        let completeTask = UIContextualAction(style: .normal, title: "Done") { [weak self] (action, view, completionHandler) in
             DataManager.deleteTask(allTasks: self!.toDoItems, taskToDelete: (self?.toDoItems.tasks[indexPath.row])!)
             tableView.deleteRows(at: [indexPath], with: .right)
             completionHandler(true)
         }
-        action.backgroundColor = .systemGreen
-        return UISwipeActionsConfiguration(actions: [action])
+        let batchEdit = UIContextualAction(style: .normal, title: "Select") { [weak self] (action, view, completionHandler) in
+            // TODO: - Implement edit mode (add buttons for batch delete, batch complete, and done editing button)
+            //   display these buttons using boolean values in TaskListView - show these three in edit mode, otherwise show
+            //   filter and new task buttons
+            self?.editMode = true
+            
+            completionHandler(true)
+        }
+        completeTask.backgroundColor = .systemGreen
+        batchEdit.backgroundColor = .lightGray
+        return UISwipeActionsConfiguration(actions: [batchEdit, completeTask])
     }
 }
 

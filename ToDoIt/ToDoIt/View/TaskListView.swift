@@ -15,18 +15,14 @@ protocol FilterTasksBySelectedTagDelegate: AnyObject {
     func filterTasksBySelectedTag(tag: String)
 }
 
-protocol PresentCompletedTasksViewDelegate: AnyObject {
-    func presentCompletedTasksView()
-}
-
 class TaskListView: UIView {
 
     var presentTaskViewDelegate: PresentNewTaskViewDelegate?
     var filterTasksBySelectedTagDelegate: FilterTasksBySelectedTagDelegate?
-    var presentCompletedTasksViewDelegate: PresentCompletedTasksViewDelegate?
     var toDoItems: [ToDoItem]
     var allTags: Tags
     var filterMenu = UIMenu()
+    var navBarMenu = UIMenu()
     
     // MARK: - UI Properties
     
@@ -44,21 +40,20 @@ class TaskListView: UIView {
         let icon = UIImage(systemName: "line.3.horizontal.decrease.circle", withConfiguration: UIImage.SymbolConfiguration(textStyle: .title1))
         let button = UIButton()
         button.setImage(icon, for: .normal)
-//        button.menu = filterMenu
         button.showsMenuAsPrimaryAction = true
         button.tintColor = UIColor(named: "text")
         return button
     }()
     
-    lazy var newTaskButton: UIButton = {
-        let icon = UIImage(systemName: "plus.circle", withConfiguration: UIImage.SymbolConfiguration(textStyle: .title1))
+    lazy var navBarMenuButton: UIButton = {
+        let icon = UIImage(systemName: "ellipsis.circle", withConfiguration: UIImage.SymbolConfiguration(textStyle: .title1))
         let button = UIButton()
         button.setImage(icon, for: .normal)
-        button.addTarget(self, action: #selector(newTaskButtonTapped), for: .touchUpInside)
+        button.showsMenuAsPrimaryAction = true
         button.tintColor = UIColor(named: "text")
         return button
     }()
-    
+
     lazy var navBarButtonStackView: UIStackView = {
         let stack = UIStackView()
         stack.translatesAutoresizingMaskIntoConstraints = false
@@ -67,6 +62,16 @@ class TaskListView: UIView {
         stack.distribution = .fill
         stack.spacing = 10
         return stack
+    }()
+    
+    lazy var newTaskButton: UIButton = {
+        let icon = UIImage(systemName: "plus.circle", withConfiguration: UIImage.SymbolConfiguration(textStyle: .title1))
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setImage(icon, for: .normal)
+        button.addTarget(self, action: #selector(newTaskButtonTapped), for: .touchUpInside)
+        button.tintColor = UIColor(named: "text")
+        return button
     }()
     
     let tableView: UITableView = {
@@ -80,15 +85,6 @@ class TaskListView: UIView {
         return tableView
     }()
     
-    lazy var showCompletedTasksButton: UIButton = {
-        let button = UIButton()
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.tintColor = UIColor(named: "text")
-        button.setImage(UIImage(systemName: "archivebox.fill", withConfiguration: UIImage.SymbolConfiguration(textStyle: .title1)), for: .normal)
-        button.addTarget(self, action: #selector(showCompletedTasksButtonTapped), for: .touchUpInside)
-        return button
-    }()
-    
     // MARK: - Initializers
     
     init(toDoItems: [ToDoItem], allTags: Tags) {
@@ -100,6 +96,7 @@ class TaskListView: UIView {
         backgroundColor = UIColor(named: "background")
         
         configureFilterMenu()
+        configureNavBarMenu()
         configureViews()
     }
     
@@ -125,22 +122,35 @@ class TaskListView: UIView {
         filterButton.menu = filterMenu
     }
     
-    @objc func newTaskButtonTapped() {
-        presentTaskViewDelegate?.presentNewTaskView()
+    func configureNavBarMenu() {
+        var navBarMenuItems: [UIAction] = []
+        
+        navBarMenuItems.append(UIAction(title: "Select Tasks", image: UIImage(systemName: "checkmark.circle"), handler: { selectTasks in
+            // TODO: - implement
+        }))
+        
+        navBarMenuItems.append(UIAction(title: "Show Completed", image: UIImage(systemName: "eye"), handler: { showCompletedTasks in
+            // TODO: - implement
+            
+            //  when selected, switch menu item to be "Hide Completed" to turn off
+        }))
+
+        navBarMenu = UIMenu(title: "", options: [.displayInline, .singleSelection], children: navBarMenuItems)
+        navBarMenuButton.menu = navBarMenu
     }
     
-    @objc func showCompletedTasksButtonTapped() {
-        presentCompletedTasksViewDelegate?.presentCompletedTasksView()
+    @objc func newTaskButtonTapped() {
+        presentTaskViewDelegate?.presentNewTaskView()
     }
 
     // MARK: - UI Setup
 
     private func configureViews() {
         navBarButtonStackView.addArrangedSubview(filterButton)
-        navBarButtonStackView.addArrangedSubview(newTaskButton)
+        navBarButtonStackView.addArrangedSubview(navBarMenuButton)
         
         addSubview(tableView)
-        addSubview(showCompletedTasksButton)
+        addSubview(newTaskButton)
         
         NSLayoutConstraint.activate([
             tableView.topAnchor.constraint(equalTo: topAnchor),
@@ -148,8 +158,8 @@ class TaskListView: UIView {
             tableView.trailingAnchor.constraint(equalTo: trailingAnchor),
             tableView.heightAnchor.constraint(equalTo: heightAnchor, multiplier: 0.9),
             
-            showCompletedTasksButton.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor),
-            showCompletedTasksButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
+            newTaskButton.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor),
+            newTaskButton.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
         ])
     }
 }

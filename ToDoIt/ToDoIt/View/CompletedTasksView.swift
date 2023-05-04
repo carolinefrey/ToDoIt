@@ -9,8 +9,6 @@ import UIKit
 
 class CompletedTasksView: UIView {
     
-    var presentCompletedTasksViewDelegate: PresentCompletedTasksViewDelegate?
-
     // MARK: - UI Properties
         
     let viewTitleLabel: UILabel = {
