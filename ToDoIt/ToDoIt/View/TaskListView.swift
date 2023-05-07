@@ -15,25 +15,31 @@ protocol FilterTasksBySelectedTagDelegate: AnyObject {
     func filterTasksBySelectedTag(tag: String)
 }
 
+protocol ToggleEditModeDelegate: AnyObject {
+    func toggleDoneButton(editMode: Bool)
+}
+
 class TaskListView: UIView {
 
     var presentTaskViewDelegate: PresentNewTaskViewDelegate?
     var filterTasksBySelectedTagDelegate: FilterTasksBySelectedTagDelegate?
+    var toggleEditModeDelegate: ToggleEditModeDelegate?
     var toDoItems: [ToDoItem]
     var allTags: Tags
     var filterMenu = UIMenu()
     var navBarMenu = UIMenu()
+    var editMode: Bool = false
     
     // MARK: - UI Properties
     
-    let todayTitle: UILabel = {
-        let todayTitle = UILabel()
-        todayTitle.translatesAutoresizingMaskIntoConstraints = false
-        todayTitle.font = .boldSystemFont(ofSize: 38)
-        todayTitle.textColor = UIColor(named: "text")
-        todayTitle.text = "Today"
-        todayTitle.textAlignment = .left
-        return todayTitle
+    let viewTitle: UILabel = {
+        let viewTitle = UILabel()
+        viewTitle.translatesAutoresizingMaskIntoConstraints = false
+        viewTitle.font = .boldSystemFont(ofSize: 38)
+        viewTitle.textColor = UIColor(named: "text")
+        viewTitle.text = "Tasks"
+        viewTitle.textAlignment = .left
+        return viewTitle
     }()
     
     lazy var filterButton: UIButton = {
@@ -71,6 +77,14 @@ class TaskListView: UIView {
         button.setImage(icon, for: .normal)
         button.addTarget(self, action: #selector(newTaskButtonTapped), for: .touchUpInside)
         button.tintColor = UIColor(named: "text")
+        return button
+    }()
+    
+    lazy var doneButtonView: UIButton = {
+        let button = UIButton()
+        button.setTitle("Done", for: .normal)
+        button.setTitleColor(UIColor(named: "text"), for: .normal)
+        button.addTarget(self, action: #selector(doneButtonTapped), for: .touchUpInside)
         return button
     }()
     
@@ -122,25 +136,41 @@ class TaskListView: UIView {
         filterButton.menu = filterMenu
     }
     
-    func configureNavBarMenu() {
+    private func configureNavBarMenu() {
         var navBarMenuItems: [UIAction] = []
         
-        navBarMenuItems.append(UIAction(title: "Select Tasks", image: UIImage(systemName: "checkmark.circle"), handler: { selectTasks in
-            // TODO: - implement
-        }))
+        let selectTasksAction = UIAction(title: "Select Tasks", image: UIImage(systemName: "checkmark.circle"), handler: { selectTasks in
+            self.editMode.toggle()
+            self.toggleEditMode(editMode: self.editMode)
+        })
         
-        navBarMenuItems.append(UIAction(title: "Show Completed", image: UIImage(systemName: "eye"), handler: { showCompletedTasks in
+        let showCompletedAction = UIAction(title: "Show Completed", image: UIImage(systemName: "eye"), handler: { showCompletedTasks in
             // TODO: - implement
-            
-            //  when selected, switch menu item to be "Hide Completed" to turn off
-        }))
-
+        })
+        
+        navBarMenuItems.append(selectTasksAction)
+        navBarMenuItems.append(showCompletedAction)
+        
         navBarMenu = UIMenu(title: "", options: [.displayInline, .singleSelection], children: navBarMenuItems)
         navBarMenuButton.menu = navBarMenu
     }
     
     @objc func newTaskButtonTapped() {
         presentTaskViewDelegate?.presentNewTaskView()
+    }
+    
+    @objc func doneButtonTapped() {
+        toggleEditMode(editMode: false)
+    }
+    
+    private func toggleEditMode(editMode: Bool) {
+        if editMode {
+            self.viewTitle.text = "Select Tasks"
+            toggleEditModeDelegate?.toggleDoneButton(editMode: true)
+        } else {
+            self.viewTitle.text = "Tasks"
+            toggleEditModeDelegate?.toggleDoneButton(editMode: false)
+        }
     }
 
     // MARK: - UI Setup

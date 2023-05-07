@@ -18,7 +18,10 @@ class TaskListVC: UIViewController {
     var filteredToDoItems: [ToDoItem] = []
     var selectedFilter: String = ""
     var selectedTasks: [ToDoItem] = []
-    var editMode: Bool = false
+    
+    var viewTitleNavBar: UIBarButtonItem?
+    var navBarButtonStack: UIBarButtonItem?
+    var doneButtonNavBar: UIBarButtonItem?
     
     // MARK: - Initializer
     
@@ -39,8 +42,8 @@ class TaskListVC: UIViewController {
         contentView = TaskListView(toDoItems: toDoItems.tasks, allTags: allTags)
         view = contentView
         
-        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: contentView.todayTitle)
-        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: contentView.navBarButtonStackView)
+//        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: contentView.viewTitle)
+//        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: contentView.navBarButtonStackView)
         navigationController?.navigationBar.isTranslucent = true
         
         let standardAppearance = UINavigationBarAppearance()
@@ -52,6 +55,11 @@ class TaskListVC: UIViewController {
         setContentViewDelegates()
         
         contentView.tableView.register(TaskTableViewCell.self, forCellReuseIdentifier: TaskTableViewCell.taskTableViewCellIdentifier)
+    }
+    
+    override func viewDidLoad() {
+        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: contentView.viewTitle)
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: contentView.navBarButtonStackView)
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -72,6 +80,7 @@ class TaskListVC: UIViewController {
     private func setContentViewDelegates() {
         contentView.presentTaskViewDelegate = self
         contentView.filterTasksBySelectedTagDelegate = self
+        contentView.toggleEditModeDelegate = self
         contentView.tableView.dataSource = self
         contentView.tableView.delegate = self
     }
@@ -109,6 +118,31 @@ extension TaskListVC: FilterTasksBySelectedTagDelegate {
     }
 }
 
+// MARK: - ToggleEditModeDelegate
+
+extension TaskListVC: ToggleEditModeDelegate {
+    func toggleDoneButton(editMode: Bool) {
+        if editMode {
+            self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: contentView.doneButtonView)
+        } else {
+            navigationItem.rightBarButtonItem = UIBarButtonItem(customView: contentView.navBarButtonStackView)
+        }
+    }
+}
+
+// MARK: - AddNewTaskDelegate
+
+extension TaskListVC: UpdateTaskListDelegate {
+    func updateTaskList() {
+        self.contentView.tableView.reloadData()
+        navigationController?.dismiss(animated: true)
+    }
+    
+    func updateFilterMenu() {
+        contentView.configureFilterMenu()
+    }
+}
+
 // MARK: - UITableViewDataSource
 
 extension TaskListVC: UITableViewDataSource {
@@ -142,7 +176,7 @@ extension TaskListVC: UITableViewDataSource {
 extension TaskListVC: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if editMode {
+        if contentView.editMode {
             // TODO: - Implement some sort of indication that task has been selected
             selectedTasks.append(toDoItems.tasks[indexPath.row])
             print("selected task \(toDoItems.tasks[indexPath.row])")
@@ -166,29 +200,7 @@ extension TaskListVC: UITableViewDelegate {
             tableView.deleteRows(at: [indexPath], with: .right)
             completionHandler(true)
         }
-        let batchEdit = UIContextualAction(style: .normal, title: "Select") { [weak self] (action, view, completionHandler) in
-            // TODO: - Implement edit mode (add buttons for batch delete, batch complete, and done editing button)
-            //   display these buttons using boolean values in TaskListView - show these three in edit mode, otherwise show
-            //   filter and new task buttons
-            self?.editMode = true
-            
-            completionHandler(true)
-        }
         completeTask.backgroundColor = .systemGreen
-        batchEdit.backgroundColor = .lightGray
-        return UISwipeActionsConfiguration(actions: [batchEdit, completeTask])
-    }
-}
-
-// MARK: - AddNewTaskDelegate
-
-extension TaskListVC: UpdateTaskListDelegate {
-    func updateTaskList() {
-        self.contentView.tableView.reloadData()
-        navigationController?.dismiss(animated: true)
-    }
-    
-    func updateFilterMenu() {
-        contentView.configureFilterMenu()
+        return UISwipeActionsConfiguration(actions: [completeTask])
     }
 }
