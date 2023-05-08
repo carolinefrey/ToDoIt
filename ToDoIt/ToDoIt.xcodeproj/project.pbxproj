@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		B917415329B8E2FA00E052DC /* TaskTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B917415229B8E2FA00E052DC /* TaskTableViewCell.swift */; };
+		B9380F802A090B3000E72794 /* EditModeTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9380F7F2A090B3000E72794 /* EditModeTableViewCell.swift */; };
 		B9420C6929FA8B2C0039D38A /* EditTaskVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9420C6829FA8B2C0039D38A /* EditTaskVC.swift */; };
 		B9420C6B29FA8BAC0039D38A /* EditTaskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9420C6A29FA8BAC0039D38A /* EditTaskView.swift */; };
 		B9420C6D29FA99670039D38A /* CompletedTasksVCViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9420C6C29FA99670039D38A /* CompletedTasksVCViewController.swift */; };
@@ -30,6 +31,7 @@
 
 /* Begin PBXFileReference section */
 		B917415229B8E2FA00E052DC /* TaskTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskTableViewCell.swift; sourceTree = "<group>"; };
+		B9380F7F2A090B3000E72794 /* EditModeTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditModeTableViewCell.swift; sourceTree = "<group>"; };
 		B9420C6829FA8B2C0039D38A /* EditTaskVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditTaskVC.swift; sourceTree = "<group>"; };
 		B9420C6A29FA8BAC0039D38A /* EditTaskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditTaskView.swift; sourceTree = "<group>"; };
 		B9420C6C29FA99670039D38A /* CompletedTasksVCViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompletedTasksVCViewController.swift; sourceTree = "<group>"; };
@@ -122,6 +124,7 @@
 				B97F6F7529B8B524007D609E /* TaskListView.swift */,
 				B97F6F7B29B8B88A007D609E /* NewTaskView.swift */,
 				B917415229B8E2FA00E052DC /* TaskTableViewCell.swift */,
+				B9380F7F2A090B3000E72794 /* EditModeTableViewCell.swift */,
 				B94B64DD29BA004800456AB8 /* TagsBoxView.swift */,
 				B9A99BC329DF0ADA00230F95 /* TagsTableViewCell.swift */,
 				B9420C6A29FA8BAC0039D38A /* EditTaskView.swift */,
@@ -227,6 +230,7 @@
 				B9420C6929FA8B2C0039D38A /* EditTaskVC.swift in Sources */,
 				B97F6F6429B8B403007D609E /* TaskListVC.swift in Sources */,
 				B97F6F7629B8B524007D609E /* TaskListView.swift in Sources */,
+				B9380F802A090B3000E72794 /* EditModeTableViewCell.swift in Sources */,
 				B97F6F7C29B8B88A007D609E /* NewTaskView.swift in Sources */,
 				B97F6F7929B8B878007D609E /* NewTaskVC.swift in Sources */,
 				B94B64DE29BA004800456AB8 /* TagsBoxView.swift in Sources */,

@@ -18,6 +18,7 @@ class TaskListVC: UIViewController {
     var filteredToDoItems: [ToDoItem] = []
     var selectedFilter: String = ""
     var selectedTasks: [ToDoItem] = []
+    var editMode: Bool = false
     
     var viewTitleNavBar: UIBarButtonItem?
     var navBarButtonStack: UIBarButtonItem?
@@ -55,6 +56,7 @@ class TaskListVC: UIViewController {
         setContentViewDelegates()
         
         contentView.tableView.register(TaskTableViewCell.self, forCellReuseIdentifier: TaskTableViewCell.taskTableViewCellIdentifier)
+        contentView.tableView.register(EditModeTableViewCell.self, forCellReuseIdentifier: EditModeTableViewCell.editModeTableViewCellIdentifier)
     }
     
     override func viewDidLoad() {
@@ -124,9 +126,12 @@ extension TaskListVC: ToggleEditModeDelegate {
     func toggleDoneButton(editMode: Bool) {
         if editMode {
             self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: contentView.doneButtonView)
+            self.editMode = editMode
         } else {
             navigationItem.rightBarButtonItem = UIBarButtonItem(customView: contentView.navBarButtonStackView)
+            self.editMode = editMode
         }
+        contentView.tableView.reloadData()
     }
 }
 
@@ -155,6 +160,29 @@ extension TaskListVC: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        if editMode {
+            return configureEditModeCells(indexPath: indexPath)
+        } else {
+            return configureDefaultCells(indexPath: indexPath)
+        }
+    }
+    
+    func configureEditModeCells(indexPath: IndexPath) -> EditModeTableViewCell {
+        let cell = contentView.tableView.dequeueReusableCell(withIdentifier: EditModeTableViewCell.editModeTableViewCellIdentifier) as! EditModeTableViewCell
+        
+        if filteredToDoItems.count != 0 {
+            cell.configureTask(task: filteredToDoItems[indexPath.row])
+        } else {
+            cell.configureTask(task: toDoItems.tasks[indexPath.row])
+        }
+        cell.backgroundColor = UIColor(named: "background")
+        let selectedBackgroundView = UIView(frame: .zero)
+        selectedBackgroundView.backgroundColor = UIColor(named: "background")
+        cell.selectedBackgroundView = selectedBackgroundView
+        return cell
+    }
+    
+    func configureDefaultCells(indexPath: IndexPath) -> TaskTableViewCell {
         let cell = contentView.tableView.dequeueReusableCell(withIdentifier: TaskTableViewCell.taskTableViewCellIdentifier) as! TaskTableViewCell
         
         if filteredToDoItems.count != 0 {
@@ -162,13 +190,13 @@ extension TaskListVC: UITableViewDataSource {
         } else {
             cell.configureTask(task: toDoItems.tasks[indexPath.row])
         }
-        
         cell.backgroundColor = UIColor(named: "background")
         let selectedBackgroundView = UIView(frame: .zero)
         selectedBackgroundView.backgroundColor = UIColor(named: "background")
         cell.selectedBackgroundView = selectedBackgroundView
         return cell
     }
+
 }
 
 // MARK: - UITableViewDelegate
