@@ -19,11 +19,17 @@ protocol ToggleEditModeDelegate: AnyObject {
     func toggleVCEditMode(editMode: Bool)
 }
 
+protocol BatchDeleteTasksDelegate: AnyObject {
+    func batchDeleteSelectedTasks()
+}
+
 class TaskListView: UIView {
 
     var presentTaskViewDelegate: PresentNewTaskViewDelegate?
     var filterTasksBySelectedTagDelegate: FilterTasksBySelectedTagDelegate?
     var toggleEditModeDelegate: ToggleEditModeDelegate?
+    var batchDeleteTasksDelegate: BatchDeleteTasksDelegate?
+    
     var toDoItems: [ToDoItem]
     var allTags: Tags
     var filterMenu = UIMenu()
@@ -71,10 +77,9 @@ class TaskListView: UIView {
     }()
     
     lazy var newTaskButton: UIButton = {
-        let icon = UIImage(systemName: "plus.circle", withConfiguration: UIImage.SymbolConfiguration(textStyle: .title1))
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setImage(icon, for: .normal)
+        button.setImage(UIImage(systemName: "plus.circle", withConfiguration: UIImage.SymbolConfiguration(textStyle: .title1)), for: .normal)
         button.addTarget(self, action: #selector(newTaskButtonTapped), for: .touchUpInside)
         button.tintColor = UIColor(named: "text")
         return button
@@ -85,6 +90,16 @@ class TaskListView: UIView {
         button.setTitle("Done", for: .normal)
         button.setTitleColor(UIColor(named: "text"), for: .normal)
         button.addTarget(self, action: #selector(doneButtonTapped), for: .touchUpInside)
+        return button
+    }()
+    
+    lazy var deleteButtonView: UIButton = {
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setImage(UIImage(systemName: "trash", withConfiguration: UIImage.SymbolConfiguration(textStyle: .title1)), for: .normal)
+        button.addTarget(self, action: #selector(deleteButtonTapped), for: .touchUpInside)
+        button.tintColor = UIColor(named: "text")
+        button.isEnabled = false
         return button
     }()
     
@@ -163,12 +178,18 @@ class TaskListView: UIView {
         toggleEditMode(editMode: false)
     }
     
+    @objc func deleteButtonTapped() {
+        batchDeleteTasksDelegate?.batchDeleteSelectedTasks()
+    }
+    
     private func toggleEditMode(editMode: Bool) {
         if editMode {
             self.viewTitle.text = "Select Tasks"
+            self.deleteButtonView.isEnabled = true
             toggleEditModeDelegate?.toggleVCEditMode(editMode: true)
         } else {
             self.viewTitle.text = "Tasks"
+            self.deleteButtonView.isEnabled = false
             toggleEditModeDelegate?.toggleVCEditMode(editMode: false)
         }
     }
@@ -181,6 +202,7 @@ class TaskListView: UIView {
         
         addSubview(tableView)
         addSubview(newTaskButton)
+        addSubview(deleteButtonView)
         
         NSLayoutConstraint.activate([
             tableView.topAnchor.constraint(equalTo: topAnchor),
@@ -190,6 +212,9 @@ class TaskListView: UIView {
             
             newTaskButton.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor),
             newTaskButton.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
+            
+            deleteButtonView.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor),
+            deleteButtonView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20)
         ])
     }
 }

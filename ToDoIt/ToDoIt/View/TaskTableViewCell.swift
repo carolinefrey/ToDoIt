@@ -61,8 +61,10 @@ class TaskTableViewCell: UITableViewCell {
             taskFieldView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -15),
             taskFieldView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -15),
             
-            tagView.centerYAnchor.constraint(equalTo: centerYAnchor),
-            tagView.trailingAnchor.constraint(equalTo: taskFieldView.trailingAnchor, constant: -15)
+//            tagView.centerYAnchor.constraint(equalTo: centerYAnchor),
+//            tagView.trailingAnchor.constraint(equalTo: taskFieldView.trailingAnchor, constant: -15)
+            tagView.topAnchor.constraint(equalTo: taskFieldView.bottomAnchor),
+            tagView.leadingAnchor.constraint(equalTo: taskFieldView.leadingAnchor, constant: 6)
         ])
     }
 }

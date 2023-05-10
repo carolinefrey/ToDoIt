@@ -68,6 +68,8 @@ class TaskListVC: UIViewController {
         contentView.presentTaskViewDelegate = self
         contentView.filterTasksBySelectedTagDelegate = self
         contentView.toggleEditModeDelegate = self
+        contentView.batchDeleteTasksDelegate = self
+        
         contentView.tableView.dataSource = self
         contentView.tableView.delegate = self
     }
@@ -146,6 +148,20 @@ extension TaskListVC: UpdateTaskListDelegate {
     
     func updateFilterMenu() {
         contentView.configureFilterMenu()
+    }
+}
+
+// MARK: - BatchDeleteTasksDelegate {
+
+extension TaskListVC: BatchDeleteTasksDelegate {
+    func batchDeleteSelectedTasks() {
+        for selectedTask in selectedTasks {
+            toDoItems.tasks.removeAll { task in
+                task == selectedTask
+            }
+            DataManager.deleteTask(allTasks: self.toDoItems, taskToDelete: selectedTask)
+        }
+        contentView.tableView.reloadData()
     }
 }
 
