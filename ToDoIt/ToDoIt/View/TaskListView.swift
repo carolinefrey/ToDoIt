@@ -16,7 +16,7 @@ protocol FilterTasksBySelectedTagDelegate: AnyObject {
 }
 
 protocol ToggleEditModeDelegate: AnyObject {
-    func toggleDoneButton(editMode: Bool)
+    func toggleVCEditMode(editMode: Bool)
 }
 
 class TaskListView: UIView {
@@ -145,7 +145,7 @@ class TaskListView: UIView {
         })
         
         let showCompletedAction = UIAction(title: "Show Completed", image: UIImage(systemName: "eye"), handler: { showCompletedTasks in
-            // TODO: - implement
+            // TODO: - Implement show completed tasks
         })
         
         navBarMenuItems.append(selectTasksAction)
@@ -166,10 +166,10 @@ class TaskListView: UIView {
     private func toggleEditMode(editMode: Bool) {
         if editMode {
             self.viewTitle.text = "Select Tasks"
-            toggleEditModeDelegate?.toggleDoneButton(editMode: true)
+            toggleEditModeDelegate?.toggleVCEditMode(editMode: true)
         } else {
             self.viewTitle.text = "Tasks"
-            toggleEditModeDelegate?.toggleDoneButton(editMode: false)
+            toggleEditModeDelegate?.toggleVCEditMode(editMode: false)
         }
     }
 

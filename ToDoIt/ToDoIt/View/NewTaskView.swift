@@ -58,7 +58,7 @@ class NewTaskView: UIView {
         return box
     }()
     
-    let keyboardToolbar: UIToolbar = {
+    lazy var keyboardToolbar: UIToolbar = {
         let keyboardToolbar = UIToolbar()
         keyboardToolbar.sizeToFit()
         let flexible = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)

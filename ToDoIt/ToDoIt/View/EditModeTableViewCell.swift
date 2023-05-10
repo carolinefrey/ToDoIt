@@ -16,10 +16,11 @@ class EditModeTableViewCell: UITableViewCell {
     lazy var taskSelectedButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.setImage(UIImage(systemName: "circle"), for: .normal)
-//        button.setImage(UIImage(systemName: "circle.fill"), for: .selected)
         button.addTarget(self, action: #selector(taskSelectedButtonTapped), for: .touchUpInside)
         button.tintColor = .black
+        var config = UIButton.Configuration.plain()
+        config.image = UIImage(systemName: "circle")
+        button.configuration = config
         return button
     }()
 
@@ -54,8 +55,12 @@ class EditModeTableViewCell: UITableViewCell {
     
     // MARK: - Functions
     
-    @objc func taskSelectedButtonTapped() {
-        taskSelectedButton.setImage(UIImage(systemName: "circle.fill"), for: .normal)
+    @objc func taskSelectedButtonTapped(sender: UIButton) {
+        sender.configurationUpdateHandler = { button in
+            var config = button.configuration
+            config?.image = button.isSelected ? UIImage(systemName: "circle.fill") : UIImage(systemName: "circle")
+            button.configuration = config
+        }
     }
     
     func configureTask(task: ToDoItem) {
@@ -66,7 +71,7 @@ class EditModeTableViewCell: UITableViewCell {
     // MARK: - UI Setup
     
     private func configureViews() {
-        addSubview(taskSelectedButton)
+        contentView.addSubview(taskSelectedButton)
         addSubview(taskFieldView)
         addSubview(tagView)
         
