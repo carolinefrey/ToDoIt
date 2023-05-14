@@ -19,8 +19,9 @@ protocol ToggleEditModeDelegate: AnyObject {
     func toggleVCEditMode(editMode: Bool)
 }
 
-protocol BatchDeleteTasksDelegate: AnyObject {
+protocol BatchEditTasksDelegate: AnyObject {
     func batchDeleteSelectedTasks()
+    func batchCompleteSelectedTasks()
 }
 
 class TaskListView: UIView {
@@ -28,7 +29,7 @@ class TaskListView: UIView {
     var presentTaskViewDelegate: PresentNewTaskViewDelegate?
     var filterTasksBySelectedTagDelegate: FilterTasksBySelectedTagDelegate?
     var toggleEditModeDelegate: ToggleEditModeDelegate?
-    var batchDeleteTasksDelegate: BatchDeleteTasksDelegate?
+    var batchEditTasksDelegate: BatchEditTasksDelegate?
     
     var toDoItems: [ToDoItem]
     var allTags: Tags
@@ -93,11 +94,21 @@ class TaskListView: UIView {
         return button
     }()
     
-    lazy var deleteButtonView: UIButton = {
+    lazy var batchDeleteButtonView: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setImage(UIImage(systemName: "trash", withConfiguration: UIImage.SymbolConfiguration(textStyle: .title1)), for: .normal)
-        button.addTarget(self, action: #selector(deleteButtonTapped), for: .touchUpInside)
+        button.addTarget(self, action: #selector(batchDeleteButtonTapped), for: .touchUpInside)
+        button.tintColor = UIColor(named: "text")
+        button.isEnabled = false
+        return button
+    }()
+    
+    lazy var batchCompleteButtonView: UIButton = {
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setImage(UIImage(systemName: "checkmark.circle", withConfiguration: UIImage.SymbolConfiguration(textStyle: .title1)), for: .normal)
+        button.addTarget(self, action: #selector(batchCompleteButtonTapped), for: .touchUpInside)
         button.tintColor = UIColor(named: "text")
         button.isEnabled = false
         return button
@@ -160,7 +171,8 @@ class TaskListView: UIView {
         })
         
         let showCompletedAction = UIAction(title: "Show Completed", image: UIImage(systemName: "eye"), handler: { showCompletedTasks in
-            // TODO: - Implement show completed tasks
+            self.editMode.toggle()
+            self.toggleEditMode(editMode: self.editMode)
         })
         
         navBarMenuItems.append(selectTasksAction)
@@ -178,18 +190,24 @@ class TaskListView: UIView {
         toggleEditMode(editMode: false)
     }
     
-    @objc func deleteButtonTapped() {
-        batchDeleteTasksDelegate?.batchDeleteSelectedTasks()
+    @objc func batchDeleteButtonTapped() {
+        batchEditTasksDelegate?.batchDeleteSelectedTasks()
+    }
+    
+    @objc func batchCompleteButtonTapped() {
+        batchEditTasksDelegate?.batchDeleteSelectedTasks()
     }
     
     private func toggleEditMode(editMode: Bool) {
         if editMode {
             self.viewTitle.text = "Select Tasks"
-            self.deleteButtonView.isEnabled = true
+            self.batchDeleteButtonView.isEnabled = true
+            self.batchCompleteButtonView.isEnabled = true
             toggleEditModeDelegate?.toggleVCEditMode(editMode: true)
         } else {
             self.viewTitle.text = "Tasks"
-            self.deleteButtonView.isEnabled = false
+            self.batchDeleteButtonView.isEnabled = false
+            self.batchCompleteButtonView.isEnabled = false
             toggleEditModeDelegate?.toggleVCEditMode(editMode: false)
         }
     }
@@ -202,7 +220,8 @@ class TaskListView: UIView {
         
         addSubview(tableView)
         addSubview(newTaskButton)
-        addSubview(deleteButtonView)
+        addSubview(batchDeleteButtonView)
+        addSubview(batchCompleteButtonView)
         
         NSLayoutConstraint.activate([
             tableView.topAnchor.constraint(equalTo: topAnchor),
@@ -213,8 +232,11 @@ class TaskListView: UIView {
             newTaskButton.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor),
             newTaskButton.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 20),
             
-            deleteButtonView.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor),
-            deleteButtonView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20)
+            batchDeleteButtonView.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor),
+            batchDeleteButtonView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20),
+            
+            batchCompleteButtonView.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor),
+            batchCompleteButtonView.trailingAnchor.constraint(equalTo: batchDeleteButtonView.leadingAnchor, constant: -20)
         ])
     }
 }

@@ -68,7 +68,7 @@ class TaskListVC: UIViewController {
         contentView.presentTaskViewDelegate = self
         contentView.filterTasksBySelectedTagDelegate = self
         contentView.toggleEditModeDelegate = self
-        contentView.batchDeleteTasksDelegate = self
+        contentView.batchEditTasksDelegate = self
         
         contentView.tableView.dataSource = self
         contentView.tableView.delegate = self
@@ -153,7 +153,7 @@ extension TaskListVC: UpdateTaskListDelegate {
 
 // MARK: - BatchDeleteTasksDelegate {
 
-extension TaskListVC: BatchDeleteTasksDelegate {
+extension TaskListVC: BatchEditTasksDelegate {
     func batchDeleteSelectedTasks() {
         for selectedTask in selectedTasks {
             toDoItems.tasks.removeAll { task in
@@ -162,6 +162,10 @@ extension TaskListVC: BatchDeleteTasksDelegate {
             DataManager.deleteTask(allTasks: self.toDoItems, taskToDelete: selectedTask)
         }
         contentView.tableView.reloadData()
+    }
+    
+    func batchCompleteSelectedTasks() {
+        batchDeleteSelectedTasks()
     }
 }
 
