@@ -13,12 +13,12 @@ class TaskListVC: UIViewController {
     
     private var contentView: TaskListView!
     
-    var toDoItems = Tasks()
+    var toDoItems = AllTasks()
     var allTags: Tags
     var filteredToDoItems: [ToDoItem] = []
     var selectedFilter: String = ""
     var selectedTasks: [ToDoItem] = []
-    var editMode: Bool = false
+    var editMode: EditMode = .none
     
     var viewTitleNavBar: UIBarButtonItem?
     var navBarButtonStack: UIBarButtonItem?
@@ -40,7 +40,7 @@ class TaskListVC: UIViewController {
     override func loadView() {
         super.loadView()
                     
-        contentView = TaskListView(toDoItems: toDoItems.tasks, allTags: allTags)
+        contentView = TaskListView(toDoItems: toDoItems.allTasks, allTags: allTags)
         view = contentView
         
         configureNavigationController()
@@ -110,7 +110,7 @@ extension TaskListVC: FilterTasksBySelectedTagDelegate {
         } else {
             selectedFilter = tag
             filteredToDoItems = []
-            for task in toDoItems.tasks {
+            for task in toDoItems.allTasks {
                 if task.tag == selectedFilter {
                     filteredToDoItems.append(task)
                 }
@@ -124,12 +124,16 @@ extension TaskListVC: FilterTasksBySelectedTagDelegate {
 // MARK: - ToggleEditModeDelegate
 
 extension TaskListVC: ToggleEditModeDelegate {
-    func toggleVCEditMode(editMode: Bool) {
-        if editMode { // turn on
-            self.editMode = true
+    func toggleVCEditMode(editMode: EditMode) {
+        switch editMode {
+        case .selectTasks:
+            self.editMode = .selectTasks
             self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: contentView.doneButtonView)
-        } else { // turn off
-            self.editMode = false
+        case .showCompletedTasks:
+            self.editMode = .showCompletedTasks
+            self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: contentView.doneButtonView)
+        case .none:
+            self.editMode = .none
             navigationItem.rightBarButtonItem = UIBarButtonItem(customView: contentView.navBarButtonStackView)
             selectedTasks.removeAll()
             contentView.tableView.removeRowSelections()
@@ -156,7 +160,7 @@ extension TaskListVC: UpdateTaskListDelegate {
 extension TaskListVC: BatchEditTasksDelegate {
     func batchDeleteSelectedTasks() {
         for selectedTask in selectedTasks {
-            toDoItems.tasks.removeAll { task in
+            toDoItems.allTasks.removeAll { task in
                 task == selectedTask
             }
             DataManager.deleteTask(allTasks: self.toDoItems, taskToDelete: selectedTask)
@@ -165,7 +169,13 @@ extension TaskListVC: BatchEditTasksDelegate {
     }
     
     func batchCompleteSelectedTasks() {
-        batchDeleteSelectedTasks()
+        for selectedTask in selectedTasks {
+            toDoItems.incompleteTasks.removeAll { task in
+                task == selectedTask
+            }
+            DataManager.updateTask(toDoItem: selectedTask, task: selectedTask.task, tag: selectedTask.tag, complete: true)
+        }
+        contentView.tableView.reloadData()
     }
 }
 
@@ -175,8 +185,10 @@ extension TaskListVC: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if filteredToDoItems.count != 0 {
             return filteredToDoItems.count
+        } else if editMode == .showCompletedTasks {
+            return toDoItems.allTasks.count
         } else {
-            return toDoItems.tasks.count
+            return toDoItems.incompleteTasks.count
         }
     }
     
@@ -185,8 +197,11 @@ extension TaskListVC: UITableViewDataSource {
         
         if filteredToDoItems.count != 0 {
             cell.configureTask(task: filteredToDoItems[indexPath.row])
+        } else if editMode == .showCompletedTasks {
+            print("DEBUG: all tasks = \(toDoItems.allTasks)")
+            cell.configureTask(task: toDoItems.allTasks[indexPath.row])
         } else {
-            cell.configureTask(task: toDoItems.tasks[indexPath.row])
+            cell.configureTask(task: toDoItems.incompleteTasks[indexPath.row])
         }
         cell.backgroundColor = UIColor(named: "background")
         cell.selectionStyle = .none
@@ -200,13 +215,13 @@ extension TaskListVC: UITableViewDataSource {
 extension TaskListVC: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if editMode {
+        if editMode != .none {
             tableView.cellForRow(at: indexPath)?.setSelected(true, animated: true)
             tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
             tableView.cellForRow(at: indexPath)?.tintColor = .black
-            selectedTasks.append(toDoItems.tasks[indexPath.row])
+            selectedTasks.append(toDoItems.incompleteTasks[indexPath.row])
         } else {
-            let editTaskVC = EditTaskVC(selectedToDoItem: toDoItems.tasks[indexPath.row], toDoItems: toDoItems, allTags: allTags)
+            let editTaskVC = EditTaskVC(selectedToDoItem: toDoItems.incompleteTasks[indexPath.row], toDoItems: toDoItems, allTags: allTags)
             editTaskVC.updateTaskListDelegate = self
             navigationController?.present(editTaskVC, animated: true)
         }
@@ -221,15 +236,16 @@ extension TaskListVC: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
-            DataManager.deleteTask(allTasks: toDoItems, taskToDelete: toDoItems.tasks[indexPath.row])
+            DataManager.deleteTask(allTasks: toDoItems, taskToDelete: toDoItems.allTasks[indexPath.row])
             tableView.deleteRows(at: [indexPath], with: .fade)
         }
     }
     
     func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let completeTask = UIContextualAction(style: .normal, title: "Done") { [weak self] (action, view, completionHandler) in
-            DataManager.deleteTask(allTasks: self!.toDoItems, taskToDelete: (self?.toDoItems.tasks[indexPath.row])!)
-            tableView.deleteRows(at: [indexPath], with: .right)
+            DataManager.updateTask(toDoItem: (self?.toDoItems.incompleteTasks[indexPath.row])!, task: (self?.toDoItems.incompleteTasks[indexPath.row].task)!, tag: self?.toDoItems.incompleteTasks[indexPath.row].tag, complete: true)
+            self?.toDoItems.incompleteTasks.remove(at: indexPath.row)
+            tableView.reloadData()
             completionHandler(true)
         }
         completeTask.backgroundColor = .systemGreen

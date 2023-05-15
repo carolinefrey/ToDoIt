@@ -16,7 +16,7 @@ protocol FilterTasksBySelectedTagDelegate: AnyObject {
 }
 
 protocol ToggleEditModeDelegate: AnyObject {
-    func toggleVCEditMode(editMode: Bool)
+    func toggleVCEditMode(editMode: EditMode)
 }
 
 protocol BatchEditTasksDelegate: AnyObject {
@@ -167,12 +167,12 @@ class TaskListView: UIView {
         
         let selectTasksAction = UIAction(title: "Select Tasks", image: UIImage(systemName: "checkmark.circle"), handler: { selectTasks in
             self.editMode.toggle()
-            self.toggleEditMode(editMode: self.editMode)
+            self.toggleEditMode(editMode: .selectTasks)
         })
         
         let showCompletedAction = UIAction(title: "Show Completed", image: UIImage(systemName: "eye"), handler: { showCompletedTasks in
             self.editMode.toggle()
-            self.toggleEditMode(editMode: self.editMode)
+            self.toggleEditMode(editMode: .showCompletedTasks)
         })
         
         navBarMenuItems.append(selectTasksAction)
@@ -187,7 +187,7 @@ class TaskListView: UIView {
     }
     
     @objc func doneButtonTapped() {
-        toggleEditMode(editMode: false)
+        toggleEditMode(editMode: .none)
     }
     
     @objc func batchDeleteButtonTapped() {
@@ -195,20 +195,24 @@ class TaskListView: UIView {
     }
     
     @objc func batchCompleteButtonTapped() {
-        batchEditTasksDelegate?.batchDeleteSelectedTasks()
+        batchEditTasksDelegate?.batchCompleteSelectedTasks()
     }
     
-    private func toggleEditMode(editMode: Bool) {
-        if editMode {
+    private func toggleEditMode(editMode: EditMode) {
+        switch editMode {
+        case .selectTasks:
             self.viewTitle.text = "Select Tasks"
             self.batchDeleteButtonView.isEnabled = true
             self.batchCompleteButtonView.isEnabled = true
-            toggleEditModeDelegate?.toggleVCEditMode(editMode: true)
-        } else {
+            toggleEditModeDelegate?.toggleVCEditMode(editMode: .selectTasks)
+        case .showCompletedTasks:
+            self.viewTitle.text = "Completed Tasks"
+            toggleEditModeDelegate?.toggleVCEditMode(editMode: .showCompletedTasks)
+        case .none:
             self.viewTitle.text = "Tasks"
             self.batchDeleteButtonView.isEnabled = false
             self.batchCompleteButtonView.isEnabled = false
-            toggleEditModeDelegate?.toggleVCEditMode(editMode: false)
+            toggleEditModeDelegate?.toggleVCEditMode(editMode: .none)
         }
     }
 

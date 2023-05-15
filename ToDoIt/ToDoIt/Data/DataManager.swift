@@ -9,8 +9,13 @@ import Foundation
 import CoreData
 import UIKit
 
-class Tasks {
-    var tasks: [ToDoItem]
+enum EditMode {
+    case none, selectTasks, showCompletedTasks
+}
+
+class AllTasks {
+    var allTasks: [ToDoItem]
+    var incompleteTasks: [ToDoItem] = []
     
     init() {
         var temp: [ToDoItem] = []
@@ -19,19 +24,25 @@ class Tasks {
                 temp = fetchedTasks
             }
         }
-        self.tasks = temp
+        self.allTasks = temp
+        
+        for task in temp {
+            if task.complete != true {
+                incompleteTasks.append(task)
+            }
+        }
     }
 }
 
 class Tags {
-    var tasks: Tasks
+    var tasks: AllTasks
     var tags: [String]
     
-    init(tasks: Tasks) {
+    init(tasks: AllTasks) {
         var temp: [String] = []
         self.tasks = tasks
         // iterate through tasks and append tags to allTags array, avoiding dupes
-        for toDoItem in tasks.tasks {
+        for toDoItem in tasks.allTasks {
             if let taskTag = toDoItem.tag {
                 if taskTag != "" && !temp.contains(taskTag) {
                     temp.append(taskTag)
@@ -50,12 +61,14 @@ class DataManager {
     
     // MARK: - Create
     
-    static func saveTask(allTasks: Tasks, task: String, tag: String?) {
+    static func saveTask(allTasks: AllTasks, task: String, tag: String?, complete: Bool) {
         let toDoItem = ToDoItem(context: managedObjectContext)
         toDoItem.task = task
         toDoItem.tag = tag
+        toDoItem.complete = complete
 
-        allTasks.tasks.append(toDoItem)
+        allTasks.allTasks.append(toDoItem)
+        allTasks.incompleteTasks.append(toDoItem)
         
         do {
             try managedObjectContext.save()
@@ -96,9 +109,10 @@ class DataManager {
     
     // MARK: - Update
     
-    static func updateTask(toDoItem: ToDoItem, task: String?, tag: String?) {
+    static func updateTask(toDoItem: ToDoItem, task: String, tag: String?, complete: Bool) {
         toDoItem.task = task
         toDoItem.tag = tag
+        toDoItem.complete = complete
         
         do {
             try managedObjectContext.save()
@@ -110,9 +124,10 @@ class DataManager {
     
     // MARK: - Delete
     
-    static func deleteTask(allTasks: Tasks, taskToDelete: ToDoItem) {
+    static func deleteTask(allTasks: AllTasks, taskToDelete: ToDoItem) {
         managedObjectContext.delete(taskToDelete)
-        allTasks.tasks.removeAll { $0 == taskToDelete }
+        allTasks.allTasks.removeAll { $0 == taskToDelete }
+        allTasks.incompleteTasks.removeAll { $0 == taskToDelete }
         do {
             try managedObjectContext.save()
         }

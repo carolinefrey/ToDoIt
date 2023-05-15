@@ -74,6 +74,13 @@
 			path = Data;
 			sourceTree = "<group>";
 		};
+		B973EC0C2A11828C00B4FC01 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
 		B97F6F5329B8B403007D609E = {
 			isa = PBXGroup;
 			children = (
@@ -96,6 +103,7 @@
 			isa = PBXGroup;
 			children = (
 				B917415629B8E4DA00E052DC /* Data */,
+				B973EC0C2A11828C00B4FC01 /* Model */,
 				B97F6F7329B8B431007D609E /* VC */,
 				B97F6F7429B8B436007D609E /* View */,
 				B97F6F5F29B8B403007D609E /* AppDelegate.swift */,
