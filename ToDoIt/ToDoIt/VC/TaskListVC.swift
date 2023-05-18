@@ -131,13 +131,14 @@ extension TaskListVC: ToggleEditModeDelegate {
             self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: contentView.doneButtonView)
         case .showCompletedTasks:
             self.editMode = .showCompletedTasks
-            self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: contentView.doneButtonView)
+            self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: contentView.navBarButtonStackView)
         case .none:
             self.editMode = .none
             navigationItem.rightBarButtonItem = UIBarButtonItem(customView: contentView.navBarButtonStackView)
             selectedTasks.removeAll()
             contentView.tableView.removeRowSelections()
         }
+        contentView.configureNavBarMenu()
         contentView.tableView.reloadData()
     }
 }

@@ -42,7 +42,7 @@ class TaskListView: UIView {
     let viewTitle: UILabel = {
         let viewTitle = UILabel()
         viewTitle.translatesAutoresizingMaskIntoConstraints = false
-        viewTitle.font = .boldSystemFont(ofSize: 38)
+        viewTitle.font = .boldSystemFont(ofSize: 34)
         viewTitle.textColor = UIColor(named: "text")
         viewTitle.text = "Tasks"
         viewTitle.textAlignment = .left
@@ -162,7 +162,7 @@ class TaskListView: UIView {
         filterButton.menu = filterMenu
     }
     
-    private func configureNavBarMenu() {
+    func configureNavBarMenu() {
         var navBarMenuItems: [UIAction] = []
         
         let selectTasksAction = UIAction(title: "Select Tasks", image: UIImage(systemName: "checkmark.circle"), handler: { selectTasks in
@@ -170,13 +170,23 @@ class TaskListView: UIView {
             self.toggleEditMode(editMode: .selectTasks)
         })
         
-        let showCompletedAction = UIAction(title: "Show Completed", image: UIImage(systemName: "eye"), handler: { showCompletedTasks in
-            self.editMode.toggle()
-            self.toggleEditMode(editMode: .showCompletedTasks)
-        })
+        if editMode {
+            let showCompletedAction = UIAction(title: "Show Incomplete", image: UIImage(systemName: "eye"), handler: { showCompletedTasks in
+                self.editMode.toggle()
+                self.toggleEditMode(editMode: .none)
+            })
+            navBarMenuItems.append(selectTasksAction)
+            navBarMenuItems.append(showCompletedAction)
+        } else {
+            let showCompletedAction = UIAction(title: "Show Completed", image: UIImage(systemName: "eye"), handler: { showCompletedTasks in
+                self.editMode.toggle()
+                self.toggleEditMode(editMode: .showCompletedTasks)
+            })
+            navBarMenuItems.append(selectTasksAction)
+            navBarMenuItems.append(showCompletedAction)
+        }
         
-        navBarMenuItems.append(selectTasksAction)
-        navBarMenuItems.append(showCompletedAction)
+        
         
         navBarMenu = UIMenu(title: "", options: [.displayInline, .singleSelection], children: navBarMenuItems)
         navBarMenuButton.menu = navBarMenu
