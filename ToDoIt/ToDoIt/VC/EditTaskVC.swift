@@ -151,7 +151,7 @@ extension EditTaskVC: UITableViewDelegate {
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             // clear tag field of any existing tags that contain the tag being deleted
-            for task in toDoItems.allTasks {
+            for task in toDoItems.completedTasks {
                 if task.tag == allTags.tags[indexPath.row] {
                     task.tag = ""
                 }

@@ -40,7 +40,7 @@ class TaskListVC: UIViewController {
     override func loadView() {
         super.loadView()
                     
-        contentView = TaskListView(toDoItems: toDoItems.allTasks, allTags: allTags)
+        contentView = TaskListView(toDoItems: toDoItems.completedTasks, allTags: allTags)
         view = contentView
         
         configureNavigationController()
@@ -110,7 +110,7 @@ extension TaskListVC: FilterTasksBySelectedTagDelegate {
         } else {
             selectedFilter = tag
             filteredToDoItems = []
-            for task in toDoItems.allTasks {
+            for task in toDoItems.completedTasks {
                 if task.tag == selectedFilter {
                     filteredToDoItems.append(task)
                 }
@@ -160,7 +160,7 @@ extension TaskListVC: UpdateTaskListDelegate {
 extension TaskListVC: BatchEditTasksDelegate {
     func batchDeleteSelectedTasks() {
         for selectedTask in selectedTasks {
-            toDoItems.allTasks.removeAll { task in
+            toDoItems.completedTasks.removeAll { task in
                 task == selectedTask
             }
             DataManager.deleteTask(allTasks: self.toDoItems, taskToDelete: selectedTask)
@@ -186,7 +186,7 @@ extension TaskListVC: UITableViewDataSource {
         if filteredToDoItems.count != 0 {
             return filteredToDoItems.count
         } else if editMode == .showCompletedTasks {
-            return toDoItems.allTasks.count
+            return toDoItems.completedTasks.count
         } else {
             return toDoItems.incompleteTasks.count
         }
@@ -198,8 +198,7 @@ extension TaskListVC: UITableViewDataSource {
         if filteredToDoItems.count != 0 {
             cell.configureTask(task: filteredToDoItems[indexPath.row])
         } else if editMode == .showCompletedTasks {
-            print("DEBUG: all tasks = \(toDoItems.allTasks)")
-            cell.configureTask(task: toDoItems.allTasks[indexPath.row])
+            cell.configureTask(task: toDoItems.completedTasks[indexPath.row])
         } else {
             cell.configureTask(task: toDoItems.incompleteTasks[indexPath.row])
         }
@@ -236,20 +235,30 @@ extension TaskListVC: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
-            DataManager.deleteTask(allTasks: toDoItems, taskToDelete: toDoItems.allTasks[indexPath.row])
+            DataManager.deleteTask(allTasks: toDoItems, taskToDelete: toDoItems.completedTasks[indexPath.row])
             tableView.deleteRows(at: [indexPath], with: .fade)
         }
     }
     
     func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        let completeTask = UIContextualAction(style: .normal, title: "Done") { [weak self] (action, view, completionHandler) in
-            DataManager.updateTask(toDoItem: (self?.toDoItems.incompleteTasks[indexPath.row])!, task: (self?.toDoItems.incompleteTasks[indexPath.row].task)!, tag: self?.toDoItems.incompleteTasks[indexPath.row].tag, complete: true)
-            self?.toDoItems.incompleteTasks.remove(at: indexPath.row)
-            tableView.reloadData()
-            completionHandler(true)
+        if editMode == .showCompletedTasks {
+            // swipe action marks task as incomplete
+            let swipeAction = UIContextualAction(style: .normal, title: "Undo") { [weak self] (action, view, completionHandler) in
+                self?.toDoItems.markTaskIncomplete(task: (self?.toDoItems.completedTasks[indexPath.row])!)
+                tableView.reloadData()
+                completionHandler(true)
+            }
+            swipeAction.backgroundColor = .lightGray
+            return UISwipeActionsConfiguration(actions: [swipeAction])
+        } else {
+            let swipeAction = UIContextualAction(style: .normal, title: "Done") { [weak self] (action, view, completionHandler) in
+                self?.toDoItems.markTaskComplete(task: (self?.toDoItems.incompleteTasks[indexPath.row])!)
+                tableView.reloadData()
+                completionHandler(true)
+            }
+            swipeAction.backgroundColor = .systemGreen
+            return UISwipeActionsConfiguration(actions: [swipeAction])
         }
-        completeTask.backgroundColor = .systemGreen
-        return UISwipeActionsConfiguration(actions: [completeTask])
     }
 }
 

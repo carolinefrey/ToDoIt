@@ -14,7 +14,7 @@ enum EditMode {
 }
 
 class AllTasks {
-    var allTasks: [ToDoItem]
+    var completedTasks: [ToDoItem]
     var incompleteTasks: [ToDoItem] = []
     
     init() {
@@ -24,13 +24,30 @@ class AllTasks {
                 temp = fetchedTasks
             }
         }
-        self.allTasks = temp
+        self.completedTasks = temp
         
         for task in temp {
             if task.complete != true {
                 incompleteTasks.append(task)
+                completedTasks.removeAll { $0 == task }
             }
         }
+    }
+    
+    func markTaskComplete(task: ToDoItem) {
+        task.complete = true
+        incompleteTasks.removeAll { $0 == task }
+        completedTasks.append(task)
+        
+        DataManager.updateTask(toDoItem: task, task: task.task, tag: task.tag, complete: true)
+    }
+    
+    func markTaskIncomplete(task: ToDoItem) {
+        task.complete = false
+        completedTasks.removeAll { $0 == task }
+        incompleteTasks.append(task)
+        
+        DataManager.updateTask(toDoItem: task, task: task.task, tag: task.tag, complete: false)
     }
 }
 
@@ -42,7 +59,7 @@ class Tags {
         var temp: [String] = []
         self.tasks = tasks
         // iterate through tasks and append tags to allTags array, avoiding dupes
-        for toDoItem in tasks.allTasks {
+        for toDoItem in tasks.completedTasks {
             if let taskTag = toDoItem.tag {
                 if taskTag != "" && !temp.contains(taskTag) {
                     temp.append(taskTag)
@@ -67,7 +84,7 @@ class DataManager {
         toDoItem.tag = tag
         toDoItem.complete = complete
 
-        allTasks.allTasks.append(toDoItem)
+        allTasks.completedTasks.append(toDoItem)
         allTasks.incompleteTasks.append(toDoItem)
         
         do {
@@ -126,7 +143,7 @@ class DataManager {
     
     static func deleteTask(allTasks: AllTasks, taskToDelete: ToDoItem) {
         managedObjectContext.delete(taskToDelete)
-        allTasks.allTasks.removeAll { $0 == taskToDelete }
+        allTasks.completedTasks.removeAll { $0 == taskToDelete }
         allTasks.incompleteTasks.removeAll { $0 == taskToDelete }
         do {
             try managedObjectContext.save()
