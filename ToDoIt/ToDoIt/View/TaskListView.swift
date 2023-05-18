@@ -25,17 +25,21 @@ protocol BatchEditTasksDelegate: AnyObject {
 }
 
 class TaskListView: UIView {
-
-    var presentTaskViewDelegate: PresentNewTaskViewDelegate?
-    var filterTasksBySelectedTagDelegate: FilterTasksBySelectedTagDelegate?
-    var toggleEditModeDelegate: ToggleEditModeDelegate?
-    var batchEditTasksDelegate: BatchEditTasksDelegate?
+    
+    // MARK: - Properties
     
     var toDoItems: [ToDoItem]
     var allTags: Tags
     var filterMenu = UIMenu()
     var navBarMenu = UIMenu()
     var editMode: Bool = false
+    
+    // MARK: - Delegates
+    
+    var presentTaskViewDelegate: PresentNewTaskViewDelegate?
+    var filterTasksBySelectedTagDelegate: FilterTasksBySelectedTagDelegate?
+    var toggleEditModeDelegate: ToggleEditModeDelegate?
+    var batchEditTasksDelegate: BatchEditTasksDelegate?
     
     // MARK: - UI Properties
     
@@ -185,9 +189,6 @@ class TaskListView: UIView {
             navBarMenuItems.append(selectTasksAction)
             navBarMenuItems.append(showCompletedAction)
         }
-        
-        
-        
         navBarMenu = UIMenu(title: "", options: [.displayInline, .singleSelection], children: navBarMenuItems)
         navBarMenuButton.menu = navBarMenu
     }

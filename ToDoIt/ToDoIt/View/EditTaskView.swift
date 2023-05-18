@@ -92,7 +92,7 @@ class EditTaskView: UIView {
         addSubview(tagsBoxView)
         
         taskFieldView.inputAccessoryView = keyboardToolbar
-        taskFieldView.text = "\(selectedToDoItem.task ?? "")"
+        taskFieldView.text = "\(selectedToDoItem.task)"
         
         NSLayoutConstraint.activate([
             viewTitleLabel.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 20),

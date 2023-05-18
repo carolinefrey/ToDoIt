@@ -161,9 +161,7 @@ extension TaskListVC: UpdateTaskListDelegate {
 extension TaskListVC: BatchEditTasksDelegate {
     func batchDeleteSelectedTasks() {
         for selectedTask in selectedTasks {
-            toDoItems.completedTasks.removeAll { task in
-                task == selectedTask
-            }
+            toDoItems.completedTasks.removeAll { $0 == selectedTask }
             DataManager.deleteTask(allTasks: self.toDoItems, taskToDelete: selectedTask)
         }
         contentView.tableView.reloadData()
@@ -171,10 +169,7 @@ extension TaskListVC: BatchEditTasksDelegate {
     
     func batchCompleteSelectedTasks() {
         for selectedTask in selectedTasks {
-            toDoItems.incompleteTasks.removeAll { task in
-                task == selectedTask
-            }
-            DataManager.updateTask(toDoItem: selectedTask, task: selectedTask.task, tag: selectedTask.tag, complete: true)
+            toDoItems.markTaskComplete(task: selectedTask)
         }
         contentView.tableView.reloadData()
     }
