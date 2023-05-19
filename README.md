@@ -9,7 +9,7 @@ A simple to-do list app. Features include adding tags to tasks, filtering by tag
 <img src="https://github.com/carolinefrey/ToDoIt/assets/22801309/a0145a8c-0421-478d-8b5b-bbe7105de7cb" width="200">
 </p>
 
-## Filter by tasks
+## Filter by tags
 <p float="center">
 <img src="https://github.com/carolinefrey/ToDoIt/assets/22801309/b4fea2d6-49e7-42c7-a97f-76b843fd36c3" width="200">
 <img src="https://github.com/carolinefrey/ToDoIt/assets/22801309/445a8c5c-f9b0-49a8-8381-6fec2345e382" width="200">
