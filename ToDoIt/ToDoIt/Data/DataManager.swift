@@ -84,7 +84,6 @@ class DataManager {
         toDoItem.tag = tag
         toDoItem.complete = complete
 
-        allTasks.completedTasks.append(toDoItem)
         allTasks.incompleteTasks.append(toDoItem)
         
         do {

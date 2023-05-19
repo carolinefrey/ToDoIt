@@ -132,13 +132,14 @@ extension TaskListVC: ToggleEditModeDelegate {
         case .showCompletedTasks:
             self.editMode = .showCompletedTasks
             self.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: contentView.navBarButtonStackView)
+            contentView.configureNavBarMenu(editMode: .showCompletedTasks)
         case .none:
             self.editMode = .none
             navigationItem.rightBarButtonItem = UIBarButtonItem(customView: contentView.navBarButtonStackView)
+            contentView.configureNavBarMenu(editMode: .none)
             selectedTasks.removeAll()
             contentView.tableView.removeRowSelections()
         }
-        contentView.configureNavBarMenu()
         contentView.tableView.reloadData()
     }
 }
@@ -214,7 +215,11 @@ extension TaskListVC: UITableViewDelegate {
             tableView.cellForRow(at: indexPath)?.setSelected(true, animated: true)
             tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
             tableView.cellForRow(at: indexPath)?.tintColor = .black
-            selectedTasks.append(toDoItems.incompleteTasks[indexPath.row])
+            if editMode == .showCompletedTasks {
+                selectedTasks.append(toDoItems.completedTasks[indexPath.row])
+            } else {
+                selectedTasks.append(toDoItems.incompleteTasks[indexPath.row])
+            }
         } else {
             let editTaskVC = EditTaskVC(selectedToDoItem: toDoItems.incompleteTasks[indexPath.row], toDoItems: toDoItems, allTags: allTags)
             editTaskVC.updateTaskListDelegate = self
@@ -231,7 +236,11 @@ extension TaskListVC: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
-            DataManager.deleteTask(allTasks: toDoItems, taskToDelete: toDoItems.completedTasks[indexPath.row])
+            if editMode == .showCompletedTasks {
+                DataManager.deleteTask(allTasks: toDoItems, taskToDelete: toDoItems.completedTasks[indexPath.row])
+            } else {
+                DataManager.deleteTask(allTasks: toDoItems, taskToDelete: toDoItems.incompleteTasks[indexPath.row])
+            }
             tableView.deleteRows(at: [indexPath], with: .fade)
         }
     }

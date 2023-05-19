@@ -32,7 +32,7 @@ class TaskListView: UIView {
     var allTags: Tags
     var filterMenu = UIMenu()
     var navBarMenu = UIMenu()
-    var editMode: Bool = false
+//    var editMode: EditMode = .none
     
     // MARK: - Delegates
     
@@ -140,7 +140,7 @@ class TaskListView: UIView {
         backgroundColor = UIColor(named: "background")
         
         configureFilterMenu()
-        configureNavBarMenu()
+        configureNavBarMenu(editMode: .none)
         configureViews()
     }
     
@@ -166,29 +166,26 @@ class TaskListView: UIView {
         filterButton.menu = filterMenu
     }
     
-    func configureNavBarMenu() {
+    func configureNavBarMenu(editMode: EditMode) {
         var navBarMenuItems: [UIAction] = []
         
         let selectTasksAction = UIAction(title: "Select Tasks", image: UIImage(systemName: "checkmark.circle"), handler: { selectTasks in
-            self.editMode.toggle()
             self.toggleEditMode(editMode: .selectTasks)
         })
+        let showCompletedAction = UIAction(title: "Show Completed", image: UIImage(systemName: "eye"), handler: { showCompletedTasks in
+            self.toggleEditMode(editMode: .showCompletedTasks)
+        })
+        let showIncompleteAction = UIAction(title: "Show Incomplete", image: UIImage(systemName: "eye"), handler: { showCompletedTasks in
+            self.toggleEditMode(editMode: .none)
+        })
         
-        if editMode {
-            let showCompletedAction = UIAction(title: "Show Incomplete", image: UIImage(systemName: "eye"), handler: { showCompletedTasks in
-                self.editMode.toggle()
-                self.toggleEditMode(editMode: .none)
-            })
+        if editMode == .none {
             navBarMenuItems.append(selectTasksAction)
             navBarMenuItems.append(showCompletedAction)
         } else {
-            let showCompletedAction = UIAction(title: "Show Completed", image: UIImage(systemName: "eye"), handler: { showCompletedTasks in
-                self.editMode.toggle()
-                self.toggleEditMode(editMode: .showCompletedTasks)
-            })
-            navBarMenuItems.append(selectTasksAction)
-            navBarMenuItems.append(showCompletedAction)
+            navBarMenuItems.append(showIncompleteAction)
         }
+
         navBarMenu = UIMenu(title: "", options: [.displayInline, .singleSelection], children: navBarMenuItems)
         navBarMenuButton.menu = navBarMenu
     }
@@ -218,6 +215,8 @@ class TaskListView: UIView {
             toggleEditModeDelegate?.toggleVCEditMode(editMode: .selectTasks)
         case .showCompletedTasks:
             self.viewTitle.text = "Completed Tasks"
+            self.batchDeleteButtonView.isEnabled = true
+            self.batchCompleteButtonView.isEnabled = false
             toggleEditModeDelegate?.toggleVCEditMode(editMode: .showCompletedTasks)
         case .none:
             self.viewTitle.text = "Tasks"
