@@ -21,3 +21,16 @@ A simple to-do list app. Features include adding tags to tasks, filtering by tag
 <img src="https://github.com/carolinefrey/ToDoIt/assets/22801309/8b40f34b-575e-4d4a-860c-6c0b145dc9e9" width="200">
 <img src="https://github.com/carolinefrey/ToDoIt/assets/22801309/713844db-d37e-47bd-b7f1-68c5ccf902d8" width="200">
 </p>
+
+## View all completed tasks
+<p float="center">
+<img src="https://github.com/carolinefrey/ToDoIt/assets/22801309/8b40f34b-575e-4d4a-860c-6c0b145dc9e9" width="200">
+<img src="https://github.com/carolinefrey/ToDoIt/assets/22801309/bdd83a88-e501-47ee-a787-2584ebc1391c" width="200">
+<img src="https://github.com/carolinefrey/ToDoIt/assets/22801309/d3f15d6c-127f-4a97-8e8b-d8f15047c429" width="200">
+<img src="https://github.com/carolinefrey/ToDoIt/assets/22801309/acfaeb7c-8fd5-4a86-ac62-5cd8a1af652a" width="200">
+</p>
+
+
+
+
+
