@@ -12,12 +12,12 @@ class TaskListVC: UIViewController {
     // MARK: - Properties
     
     private var contentView: TaskListView!
+    private let viewModel: TaskListViewModel
     
-    var toDoItems = AllTasks()
-    var allTags: Tags
-    var filteredToDoItems: [ToDoItem] = []
-    var selectedFilter: String = ""
+    private var data = TaskData()
+    
     var selectedTasks: [ToDoItem] = []
+
     var editMode: EditMode = .none
     
     var viewTitleNavBar: UIBarButtonItem?
@@ -26,8 +26,9 @@ class TaskListVC: UIViewController {
     
     // MARK: - Initializer
     
-    init() {
-        allTags = Tags(tasks: toDoItems)
+    init(viewModel: TaskListViewModel) {
+        self.viewModel = viewModel
+//        allTags = Tags(tasks: toDoItems)
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -40,7 +41,7 @@ class TaskListVC: UIViewController {
     override func loadView() {
         super.loadView()
                     
-        contentView = TaskListView(toDoItems: toDoItems.completedTasks, allTags: allTags)
+        contentView = TaskListView(toDoItems: data.toDoItems.completedTasks, allTags: data.allTags)
         view = contentView
         
         configureNavigationController()
@@ -93,7 +94,7 @@ class TaskListVC: UIViewController {
 
 extension TaskListVC: PresentNewTaskViewDelegate {
     func presentNewTaskView() {
-        let newTaskVC = NewTaskVC(toDoItems: toDoItems, allTags: allTags)
+        let newTaskVC = NewTaskVC(toDoItems: data.toDoItems, allTags: data.allTags)
         newTaskVC.updateTaskListDelegate = self
         navigationController?.present(newTaskVC, animated: true)
     }
@@ -104,15 +105,15 @@ extension TaskListVC: PresentNewTaskViewDelegate {
 extension TaskListVC: FilterTasksBySelectedTagDelegate {
     func filterTasksBySelectedTag(tag: String) {
         if tag == "All" {
-            selectedFilter = ""
-            filteredToDoItems = []
+            data.selectedFilter = ""
+            data.filteredToDoItems = []
             contentView.filterButton.setImage(UIImage(systemName: "line.3.horizontal.decrease.circle", withConfiguration: UIImage.SymbolConfiguration(textStyle: .title1)), for: .normal)
         } else {
-            selectedFilter = tag
-            filteredToDoItems = []
-            for task in toDoItems.completedTasks {
-                if task.tag == selectedFilter {
-                    filteredToDoItems.append(task)
+            data.selectedFilter = tag
+            data.filteredToDoItems = []
+            for task in data.toDoItems.completedTasks {
+                if task.tag == data.selectedFilter {
+                    data.filteredToDoItems.append(task)
                 }
             }
             contentView.filterButton.setImage(UIImage(systemName: "line.3.horizontal.decrease.circle.fill", withConfiguration: UIImage.SymbolConfiguration(textStyle: .title1)), for: .normal)
@@ -161,17 +162,12 @@ extension TaskListVC: UpdateTaskListDelegate {
 
 extension TaskListVC: BatchEditTasksDelegate {
     func batchDeleteSelectedTasks() {
-        for selectedTask in selectedTasks {
-            toDoItems.completedTasks.removeAll { $0 == selectedTask }
-            DataManager.deleteTask(allTasks: self.toDoItems, taskToDelete: selectedTask)
-        }
+        viewModel.batchDeleteSelectedTasks(selectedTasks: selectedTasks, data: data)
         contentView.tableView.reloadData()
     }
     
     func batchCompleteSelectedTasks() {
-        for selectedTask in selectedTasks {
-            toDoItems.markTaskComplete(task: selectedTask)
-        }
+        viewModel.batchCompleteSelectedTasks(selectedTasks: selectedTasks, data: data)
         contentView.tableView.reloadData()
     }
 }
@@ -180,29 +176,12 @@ extension TaskListVC: BatchEditTasksDelegate {
 
 extension TaskListVC: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if filteredToDoItems.count != 0 {
-            return filteredToDoItems.count
-        } else if editMode == .showCompletedTasks {
-            return toDoItems.completedTasks.count
-        } else {
-            return toDoItems.incompleteTasks.count
-        }
+        viewModel.handleNumRowsInSection(data: data, editMode: editMode)
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = contentView.tableView.dequeueReusableCell(withIdentifier: TaskTableViewCell.taskTableViewCellIdentifier) as! TaskTableViewCell
-        
-        if filteredToDoItems.count != 0 {
-            cell.configureTask(task: filteredToDoItems[indexPath.row])
-        } else if editMode == .showCompletedTasks {
-            cell.configureTask(task: toDoItems.completedTasks[indexPath.row])
-        } else {
-            cell.configureTask(task: toDoItems.incompleteTasks[indexPath.row])
-        }
-        cell.backgroundColor = UIColor(named: "background")
-        cell.selectionStyle = .none
-        cell.accessoryType = .none
-        return cell
+        return viewModel.handleCellRowForAt(data: data, cell: cell, indexPath: indexPath, editMode: editMode)
     }
 }
 
@@ -216,12 +195,12 @@ extension TaskListVC: UITableViewDelegate {
             tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
             tableView.cellForRow(at: indexPath)?.tintColor = .black
             if editMode == .showCompletedTasks {
-                selectedTasks.append(toDoItems.completedTasks[indexPath.row])
+                selectedTasks.append(data.toDoItems.completedTasks[indexPath.row])
             } else {
-                selectedTasks.append(toDoItems.incompleteTasks[indexPath.row])
+                selectedTasks.append(data.toDoItems.incompleteTasks[indexPath.row])
             }
         } else {
-            let editTaskVC = EditTaskVC(selectedToDoItem: toDoItems.incompleteTasks[indexPath.row], toDoItems: toDoItems, allTags: allTags)
+            let editTaskVC = EditTaskVC(selectedToDoItem: data.toDoItems.incompleteTasks[indexPath.row], toDoItems: data.toDoItems, allTags: data.allTags)
             editTaskVC.updateTaskListDelegate = self
             navigationController?.present(editTaskVC, animated: true)
         }
@@ -230,30 +209,26 @@ extension TaskListVC: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
         if let cell = contentView.tableView.cellForRow(at: indexPath) as? TaskTableViewCell {
             cell.accessoryType = .none
+            
             if editMode == .showCompletedTasks {
-                selectedTasks.removeAll { $0 == toDoItems.completedTasks[indexPath.row] }
+                selectedTasks.removeAll { $0 == data.toDoItems.completedTasks[indexPath.row] }
             } else {
-                selectedTasks.removeAll { $0 == toDoItems.incompleteTasks[indexPath.row] }
+                selectedTasks.removeAll { $0 == data.toDoItems.incompleteTasks[indexPath.row] }
             }
+            
         }
     }
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            if editMode == .showCompletedTasks {
-                DataManager.deleteTask(allTasks: toDoItems, taskToDelete: toDoItems.completedTasks[indexPath.row])
-            } else {
-                DataManager.deleteTask(allTasks: toDoItems, taskToDelete: toDoItems.incompleteTasks[indexPath.row])
-            }
-            tableView.deleteRows(at: [indexPath], with: .fade)
-        }
+        viewModel.handleEditingStyle(data: data, indexPath: indexPath, editingStyle: editingStyle, editMode: editMode)
+        tableView.deleteRows(at: [indexPath], with: .fade)
     }
     
     func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         if editMode == .showCompletedTasks {
             // swipe action marks task as incomplete
             let swipeAction = UIContextualAction(style: .normal, title: "Undo") { [weak self] (action, view, completionHandler) in
-                self?.toDoItems.markTaskIncomplete(task: (self?.toDoItems.completedTasks[indexPath.row])!)
+                self?.data.toDoItems.markTaskIncomplete(task: (self?.data.toDoItems.completedTasks[indexPath.row])!)
                 tableView.reloadData()
                 completionHandler(true)
             }
@@ -261,7 +236,7 @@ extension TaskListVC: UITableViewDelegate {
             return UISwipeActionsConfiguration(actions: [swipeAction])
         } else {
             let swipeAction = UIContextualAction(style: .normal, title: "Done") { [weak self] (action, view, completionHandler) in
-                self?.toDoItems.markTaskComplete(task: (self?.toDoItems.incompleteTasks[indexPath.row])!)
+                self?.data.toDoItems.markTaskComplete(task: (self?.data.toDoItems.incompleteTasks[indexPath.row])!)
                 tableView.reloadData()
                 completionHandler(true)
             }
