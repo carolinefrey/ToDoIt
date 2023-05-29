@@ -230,7 +230,11 @@ extension TaskListVC: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
         if let cell = contentView.tableView.cellForRow(at: indexPath) as? TaskTableViewCell {
             cell.accessoryType = .none
-            selectedTasks.remove(at: indexPath.row)
+            if editMode == .showCompletedTasks {
+                selectedTasks.removeAll { $0 == toDoItems.completedTasks[indexPath.row] }
+            } else {
+                selectedTasks.removeAll { $0 == toDoItems.incompleteTasks[indexPath.row] }
+            }
         }
     }
     

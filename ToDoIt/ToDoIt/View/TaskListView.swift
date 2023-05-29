@@ -169,13 +169,13 @@ class TaskListView: UIView {
     func configureNavBarMenu(editMode: EditMode) {
         var navBarMenuItems: [UIAction] = []
         
-        let selectTasksAction = UIAction(title: "Select Tasks", image: UIImage(systemName: "checkmark.circle"), handler: { selectTasks in
+        let selectTasksAction = UIAction(title: "Select Tasks", image: UIImage(systemName: "checkmark.circle"), handler: { _ in
             self.toggleEditMode(editMode: .selectTasks)
         })
-        let showCompletedAction = UIAction(title: "Show Completed", image: UIImage(systemName: "eye"), handler: { showCompletedTasks in
+        let showCompletedAction = UIAction(title: "Show Completed", image: UIImage(systemName: "eye"), handler: { _ in
             self.toggleEditMode(editMode: .showCompletedTasks)
         })
-        let showIncompleteAction = UIAction(title: "Show Incomplete", image: UIImage(systemName: "eye"), handler: { showCompletedTasks in
+        let showIncompleteAction = UIAction(title: "Show Incomplete", image: UIImage(systemName: "eye"), handler: { _ in
             self.toggleEditMode(editMode: .none)
         })
         
