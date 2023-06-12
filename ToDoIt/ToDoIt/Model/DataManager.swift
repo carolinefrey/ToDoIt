@@ -17,14 +17,18 @@ class DataManager {
     
     // MARK: - Create
     
-    static func saveTask(allTasks: AllTasks, task: String, tag: String?, complete: Bool) {
+    static func saveTask(allTasks: TasksData, task: String, tag: String?, complete: Bool) {
         let toDoItem = ToDoItem(context: managedObjectContext)
         toDoItem.task = task
         toDoItem.tag = tag
         toDoItem.complete = complete
 
+<<<<<<< HEAD
 //        allTasks.incompleteTasks.append(toDoItem)
         allTasks.allTasks.append(toDoItem)
+=======
+        allTasks.toDoItems.append(toDoItem)
+>>>>>>> dbf4d2d45d7d67444b35dbff282602dae3be42d4
         
         do {
             try managedObjectContext.save()
@@ -80,10 +84,9 @@ class DataManager {
     
     // MARK: - Delete
     
-    static func deleteTask(allTasks: AllTasks, taskToDelete: ToDoItem) {
+    static func deleteTask(allTasks: TasksData, taskToDelete: ToDoItem) {
         managedObjectContext.delete(taskToDelete)
-        allTasks.completedTasks.removeAll { $0 == taskToDelete }
-        allTasks.incompleteTasks.removeAll { $0 == taskToDelete }
+        allTasks.toDoItems.removeAll { $0 == taskToDelete }
         do {
             try managedObjectContext.save()
         }
