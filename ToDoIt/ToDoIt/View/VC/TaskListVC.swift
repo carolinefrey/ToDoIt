@@ -149,6 +149,8 @@ extension TaskListVC: ToggleEditModeDelegate {
 
 extension TaskListVC: UpdateTaskListDelegate {
     func updateTaskList() {
+        //TODO: - sortTasks here (TaskData, line 55)
+    
         self.contentView.tableView.reloadData()
         navigationController?.dismiss(animated: true)
     }
