@@ -23,12 +23,12 @@ class DataManager {
         toDoItem.tag = tag
         toDoItem.complete = complete
 
-<<<<<<< HEAD
+//<<<<<<< HEAD
 //        allTasks.incompleteTasks.append(toDoItem)
-        allTasks.allTasks.append(toDoItem)
-=======
+//        allTasks.allTasks.append(toDoItem)
+//=======
         allTasks.toDoItems.append(toDoItem)
->>>>>>> dbf4d2d45d7d67444b35dbff282602dae3be42d4
+//>>>>>>> dbf4d2d45d7d67444b35dbff282602dae3be42d4
         
         do {
             try managedObjectContext.save()

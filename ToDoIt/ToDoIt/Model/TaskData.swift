@@ -56,11 +56,15 @@ class TasksData {
     }
 }
 
-<<<<<<< HEAD
 class AllTasks {
     var allTasks: [ToDoItem]
     var completedTasks: [ToDoItem] = []
     var incompleteTasks: [ToDoItem] = []
+//=======
+//class AllTasks {
+//    var completedTasks: [ToDoItem]
+//>>>>>>> develop
+//    var incompleteTasks: [ToDoItem] = []
     
     init() {
         var temp: [ToDoItem] = []
@@ -69,6 +73,7 @@ class AllTasks {
                 temp = fetchedTasks
             }
         }
+//<<<<<<< HEAD
         self.allTasks = temp
         sortTasks(&allTasks)
         // sort tasks into complete/incomplete
@@ -98,6 +103,15 @@ class AllTasks {
             } else {
                 incompleteTasks.append(task)
             }
+//            self.completedTasks = temp
+            
+            //        for task in temp {
+            //            if task.complete != true {
+            //                incompleteTasks.append(task)
+            //                completedTasks.removeAll { $0 == task }
+            //>>>>>>> develop
+            //            }
+            //        }
         }
     }
     
@@ -118,16 +132,17 @@ class AllTasks {
     }
 }
 
-class Tags {
-    var tasks: AllTasks
-    var tags: [String]
-    
-    init(tasks: AllTasks) {
-        var temp: [String] = []
-        self.tasks = tasks
-        // iterate through tasks and append tags to allTags array, avoiding dupes
-        for toDoItem in tasks.allTasks {
-=======
+//class Tags {
+//    var tasks: AllTasks
+//    var tags: [String]
+//
+//    init(tasks: AllTasks) {
+//        var temp: [String] = []
+//        self.tasks = tasks
+//        // iterate through tasks and append tags to allTags array, avoiding dupes
+//<<<<<<< HEAD
+//        for toDoItem in tasks.allTasks {
+//=======
 class Tags {
     var allToDoItems: [ToDoItem]
     var tags: [String]
@@ -137,7 +152,10 @@ class Tags {
         self.allToDoItems = allToDoItems
         // iterate through tasks and append tags to allTags array, avoiding dupes
         for toDoItem in allToDoItems {
->>>>>>> dbf4d2d45d7d67444b35dbff282602dae3be42d4
+//>>>>>>> dbf4d2d45d7d67444b35dbff282602dae3be42d4
+//=======
+//        for toDoItem in tasks.completedTasks {
+//>>>>>>> develop
             if let taskTag = toDoItem.tag {
                 if taskTag != "" && !temp.contains(taskTag) {
                     temp.append(taskTag)
@@ -151,10 +169,7 @@ class Tags {
 enum EditMode {
     case none, selectTasks, showCompletedTasks
 }
-<<<<<<< HEAD
-=======
 
 enum FilterType {
     case incomplete, complete, tag(String)
 }
->>>>>>> dbf4d2d45d7d67444b35dbff282602dae3be42d4
