@@ -14,7 +14,7 @@ class TaskListVC: UIViewController {
     private var contentView: TaskListView!
     private let viewModel: TaskListViewModel
     
-    private var data = TasksData()
+    private var data = AllTasks()
     var selectedFilter: String = ""
     var filteredToDoItems: [ToDoItem] = []
     var selectedTasks: [ToDoItem] = []
@@ -41,7 +41,7 @@ class TaskListVC: UIViewController {
     override func loadView() {
         super.loadView()
                     
-        contentView = TaskListView(toDoItems: data.toDoItems, allTags: data.allTags)
+        contentView = TaskListView(toDoItems: data.allTasks, allTags: data.allTags)
         view = contentView
         
         configureNavigationController()
@@ -110,7 +110,7 @@ extension TaskListVC: FilterTasksBySelectedTagDelegate {
             contentView.filterButton.setImage(UIImage(systemName: "line.3.horizontal.decrease.circle", withConfiguration: UIImage.SymbolConfiguration(textStyle: .title1)), for: .normal)
         } else {
             selectedFilter = tag
-            filteredToDoItems = data.filterToDoItems(by: .tag(tag))
+            filteredToDoItems = data.filterTasks(by: .tag(tag))
             contentView.filterButton.setImage(UIImage(systemName: "line.3.horizontal.decrease.circle.fill", withConfiguration: UIImage.SymbolConfiguration(textStyle: .title1)), for: .normal)
         }
         contentView.tableView.reloadData()
@@ -192,9 +192,9 @@ extension TaskListVC: UITableViewDelegate {
             tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
             tableView.cellForRow(at: indexPath)?.tintColor = .black
 
-            selectedTasks.append(data.toDoItems[indexPath.row])
+            selectedTasks.append(data.allTasks[indexPath.row])
         } else {
-            let editTaskVC = EditTaskVC(selectedToDoItem: data.toDoItems[indexPath.row], toDoItems: data, allTags: data.allTags)
+            let editTaskVC = EditTaskVC(selectedToDoItem: data.allTasks[indexPath.row], toDoItems: data, allTags: data.allTags)
             editTaskVC.updateTaskListDelegate = self
             navigationController?.present(editTaskVC, animated: true)
         }
@@ -203,7 +203,7 @@ extension TaskListVC: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
         if let cell = contentView.tableView.cellForRow(at: indexPath) as? TaskTableViewCell {
             cell.accessoryType = .none
-            selectedTasks.removeAll { $0 == data.toDoItems[indexPath.row] }
+            selectedTasks.removeAll { $0 == data.allTasks[indexPath.row] }
         }
     }
     
@@ -217,7 +217,7 @@ extension TaskListVC: UITableViewDelegate {
         if editMode == .showCompletedTasks {
             // swipe action marks task as incomplete
             let swipeAction = UIContextualAction(style: .normal, title: "Undo") { [weak self] (action, view, completionHandler) in
-                self?.data.markToDoItemIncomplete(task: (self?.data.toDoItems[indexPath.row])!)
+                self!.viewModel.markTaskIncomplete(data: self!.data, task: self!.data.allTasks[indexPath.row])
                 tableView.reloadData()
                 completionHandler(true)
             }
@@ -225,7 +225,7 @@ extension TaskListVC: UITableViewDelegate {
             return UISwipeActionsConfiguration(actions: [swipeAction])
         } else {
             let swipeAction = UIContextualAction(style: .normal, title: "Done") { [weak self] (action, view, completionHandler) in
-                self?.data.markToDoItemComplete(task: (self?.data.toDoItems[indexPath.row])!)
+                self!.viewModel.markTaskComplete(data: self!.data, task: self!.data.allTasks[indexPath.row])
                 tableView.reloadData()
                 completionHandler(true)
             }

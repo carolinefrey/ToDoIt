@@ -15,7 +15,7 @@ class EditTaskVC: UIViewController {
     
     var updateTaskListDelegate: UpdateTaskListDelegate?
     
-    var toDoItems: TasksData
+    var toDoItems: AllTasks
     var allTags: Tags
     var selectedToDoItem: ToDoItem
     var selectedTag: String
@@ -23,7 +23,7 @@ class EditTaskVC: UIViewController {
     
     // MARK: - Initializer
     
-    init(selectedToDoItem: ToDoItem, toDoItems: TasksData, allTags: Tags) {
+    init(selectedToDoItem: ToDoItem, toDoItems: AllTasks, allTags: Tags) {
         self.toDoItems = toDoItems
         self.allTags = allTags
         self.selectedToDoItem = selectedToDoItem
@@ -151,7 +151,7 @@ extension EditTaskVC: UITableViewDelegate {
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             // clear tag field of any existing tags that contain the tag being deleted
-            for task in toDoItems.toDoItems {
+            for task in toDoItems.allTasks {
                 if task.tag == allTags.tags[indexPath.row] {
                     task.tag = ""
                 }
